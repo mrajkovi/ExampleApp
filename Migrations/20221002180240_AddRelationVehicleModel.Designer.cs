@@ -2,6 +2,7 @@
 using ExampleApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace ExampleApp.Migrations
 {
     [DbContext(typeof(ExampleAppContext))]
-    partial class ExampleAppContextModelSnapshot : ModelSnapshot
+    [Migration("20221002180240_AddRelationVehicleModel")]
+    partial class AddRelationVehicleModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

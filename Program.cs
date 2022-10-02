@@ -14,8 +14,10 @@ public class Program
             options.UseNpgsql(builder.Configuration.GetConnectionString("ExampleAppContext")));
 
         // Add services to the container.
-        builder.Services.AddScoped<VehicleMakeService>();
-        builder.Services.AddScoped<VehicleModelService>();
+        builder.Services.AddScoped<IVehicleMakeRepository, VehicleMakeRepository>();
+        builder.Services.AddScoped<IVehicleModelRepository, VehicleModelRepository>();
+        builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
+        builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
         builder.Services.AddControllers();
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
 

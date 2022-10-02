@@ -1,99 +1,86 @@
-using Microsoft.EntityFrameworkCore;
-using ExampleApp.Data;
 using ExampleApp.Models;
-using ExampleApp.Interfaces.Services.Vehicle;
+using ExampleApp.Data;
+using ExampleApp.Helpers.Sort;
+using ExampleApp.Helpers.Filter;
+using ExampleApp.Helpers.Paginate;
 namespace ExampleApp.Services;
 
-public class VehicleMakeService : IVehicleServiceInterface<VehicleMake>
+public interface IVehicleMakeService 
 {
-  private readonly ExampleAppContext _context = null!;
+    public Task<List<VehicleMake>> GetVehicles(string? sortOrder, string? searchString, string? pageNumber, string? pageSize);
+    public Task<VehicleMake?> GetVehicleById(int id);
+    public Task<int> CreateVehicle(VehicleMake vehicle);
+    public Task<int> UpdateVehicle(int id, VehicleMake vehicle);
+    public Task<int> DeleteVehicle(int id);
+}
+public class VehicleMakeService : IVehicleMakeService
+{
 
-    public VehicleMakeService(ExampleAppContext context)
+    private readonly IVehicleMakeRepository _repository = null!;
+
+    public VehicleMakeService(IVehicleMakeRepository repository)
     {
-        _context = context;
+        _repository = repository;
     }
 
-    public async Task<List<VehicleMake>> GetAll(string? sortOrder, string? searchString, string? pageNumber, string? pageSize) 
+    public async Task<List<VehicleMake>> GetVehicles(string? sortOrder, string? searchString, string? pageNumber, string? pageSize) 
     {
-        var vehicles = _context.VehicleMake.AsQueryable();
-        if (!String.IsNullOrEmpty(searchString))
+        var sortVehicles = new SortItems(sortOrder);
+        FilterItems? filterVehicles = null;
+        PaginateItems<VehicleMake>? paginateVehicles = null;
+        if (searchString != null) 
         {
-            vehicles = vehicles.Where(v => v.Name.Contains(searchString) || v.Abbrv.Contains(searchString));
+            filterVehicles = new FilterItems(searchString);
         }
-        switch (sortOrder)
-        {   
-            case "name_asc":
-                vehicles = vehicles.OrderBy(v => v.Name);
-                break;
-            case "name_desc":
-                vehicles = vehicles.OrderByDescending(v => v.Name);
-                break;
-            case "abbrv_asc":
-                vehicles = vehicles.OrderBy(v => v.Abbrv);
-                break;
-            case "abbrv_desc":
-                vehicles = vehicles.OrderByDescending(v => v.Abbrv);
-                break;
-            default:
-                break;
-
-        }
-
         if (!String.IsNullOrEmpty(pageNumber) && !String.IsNullOrEmpty(pageSize))
         {
-            return await IVehicleServiceInterface<VehicleMake>.PaginatedList<VehicleMake>.CreateAsync(vehicles, Int32.Parse(pageNumber), Int32.Parse(pageSize));
+            paginateVehicles = new PaginateItems<VehicleMake>(Int32.Parse(pageNumber), Int32.Parse(pageSize));
         }
-
-        return await vehicles.ToListAsync<VehicleMake>();
+        return await _repository.GetVehicles(sortVehicles, filterVehicles, paginateVehicles);
     }
     
-    public async Task<VehicleMake?> GetById(int id)
+    public async Task<VehicleMake?> GetVehicleById(int id)
     {
-        return await _context.VehicleMake.FindAsync(id);
+        return await _repository.GetVehicleById(id);
     }
 
-    public async Task<int> Create(VehicleMake vehicle) 
+    public async Task<int> CreateVehicle(VehicleMake vehicle) 
     {
-        var existingVehicle = await _context.VehicleMake.FindAsync(vehicle.Id);
+        var existingVehicle = await this.GetVehicleById(vehicle.Id);
+
         if (existingVehicle != null) 
         {
             return 404;
         }
-        _context.VehicleMake.Add(vehicle);
-        await _context.SaveChangesAsync();
-        return 201;
+        
+        return await _repository.CreateVehicle(vehicle);
     }
 
-    public async Task<int> Update(int id, VehicleMake vehicle)
+    public async Task<int> UpdateVehicle(int id, VehicleMake vehicle)
     {
         if (id != vehicle.Id) {
             return 400;
         }
-        
-        var foundVehicle = await _context.VehicleMake.FindAsync(id);
 
-        if (foundVehicle == null) {
+        var oldvehicle = await this.GetVehicleById(id);
+
+        if (oldvehicle == null) 
+        {
             return 404;
         }
-
-        foundVehicle.Abbrv = vehicle.Abbrv;
-        foundVehicle.Name = vehicle.Name;
-
-        await _context.SaveChangesAsync();
         
-        return 204;
+        return await _repository.UpdateVehicle(vehicle, oldvehicle);
     }
 
-    public async Task<int> Delete(int id)
+    public async Task<int> DeleteVehicle(int id)
     {
-        var vehicle = await _context.VehicleMake.FindAsync(id);
+        var vehicle = await this.GetVehicleById(id);
         if (vehicle == null) 
         {
             return 404;
         }
         
-        _context.VehicleMake.Remove(vehicle);
-        await _context.SaveChangesAsync();
+        await _repository.DeleteVehicle(vehicle);
 
         return 204;
     }

@@ -8,9 +8,9 @@ namespace ExampleApp.Controllers;
 [ApiController]
 public class VehicleMakeController : Controller
 {
-    private readonly VehicleMakeService _service = null!;
+    private readonly IVehicleMakeService _service = null!;
 
-    public VehicleMakeController(VehicleMakeService service)
+    public VehicleMakeController(IVehicleMakeService service)
     {
         _service = service;
     }
@@ -18,12 +18,12 @@ public class VehicleMakeController : Controller
     [HttpGet]
     public async Task<IActionResult> GetVehicles(string? sortOrder, string? searchString, string? pageNumber, string? pageSize)
     {
-        return Ok(await _service.GetAll(sortOrder, searchString, pageNumber, pageSize));
+        return Ok(await _service.GetVehicles(sortOrder, searchString, pageNumber, pageSize));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetVehicle(int id)
     {
-        var vehicle = await _service.GetById(id);
+        var vehicle = await _service.GetVehicleById(id);
         if (vehicle == null) 
         {
             return NotFound();
@@ -31,9 +31,9 @@ public class VehicleMakeController : Controller
         return Ok(vehicle);
     }
     [HttpPost]
-    public async Task<IActionResult> NewVehicle(VehicleMake vehicle)
+    public async Task<IActionResult> CreateVehicle(VehicleMake vehicle)
     {
-        var code = await _service.Create(vehicle);
+        var code = await _service.CreateVehicle(vehicle);
         if (code == 201) 
         {
             // we will just respond with status 200
@@ -46,7 +46,7 @@ public class VehicleMakeController : Controller
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateVehicle(int id, VehicleMake vehicle)
     {
-        var code = await _service.Update(id, vehicle);
+        var code = await _service.UpdateVehicle(id, vehicle);
         if (code == 204) 
         {
             return NoContent();
@@ -63,7 +63,7 @@ public class VehicleMakeController : Controller
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteVehicle(int id)
     {
-        var code = await _service.Delete(id);
+        var code = await _service.DeleteVehicle(id);
         if (code == 204) 
         {
             return NoContent();

@@ -8,22 +8,22 @@ namespace ExampleApp.Controllers;
 [ApiController]
 public class VehicleModelController : Controller
 {
-    private readonly VehicleModelService _service = null!;
+    private readonly IVehicleModelService _service = null!;
 
-    public VehicleModelController(VehicleModelService service)
+    public VehicleModelController(IVehicleModelService service)
     {
         _service = service;
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize)
+    public async Task<IActionResult> GetVehicleModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize)
     {
-        return Ok(await _service.GetAll(sortOrder, searchString, pageNumber, pageSize));
+        return Ok(await _service.GetVehicleModels(sortOrder, searchString, pageNumber, pageSize));
     }
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetModel(int id)
+    public async Task<IActionResult> GetVehicleModel(int id)
     {
-        var vehicle = await _service.GetById(id);
+        var vehicle = await _service.GetVehicleModelById(id);
         if (vehicle == null) 
         {
             return NotFound();
@@ -31,9 +31,9 @@ public class VehicleModelController : Controller
         return Ok(vehicle);
     }
     [HttpPost]
-    public async Task<IActionResult> NewModel(VehicleModel vehicleModel)
+    public async Task<IActionResult> CreateVehicleModel(VehicleModel vehicleModel)
     {
-        var code = await _service.Create(vehicleModel);
+        var code = await _service.CreateVehicleModel(vehicleModel);
         // we will just return status 200
         if (code == 201) {
             return Ok();
@@ -42,9 +42,9 @@ public class VehicleModelController : Controller
         }
     }
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateModel(int id, VehicleModel vehicleModel)
+    public async Task<IActionResult> UpdateVehicleModel(int id, VehicleModel vehicleModel)
     {
-        var code = await _service.Update(id, vehicleModel);
+        var code = await _service.UpdateVehicleModel(id, vehicleModel);
         if (code == 204) 
         {
             return NoContent();
@@ -59,9 +59,9 @@ public class VehicleModelController : Controller
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteModel(int id)
+    public async Task<IActionResult> DeleteVehicleModel(int id)
     {
-        var code = await _service.Delete(id);
+        var code = await _service.DeleteVehicleModel(id);
         if (code == 204) 
         {
             return NoContent();
