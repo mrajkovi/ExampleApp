@@ -18,7 +18,7 @@ public class VehicleModelController : Controller
     [HttpGet]
     public async Task<IActionResult> GetVehicleModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize)
     {
-        return Ok(await _service.GetVehicleModels(sortOrder, searchString, pageNumber, pageSize));
+        return View("Index", await _service.GetVehicleModels(sortOrder, searchString, pageNumber, pageSize));
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetVehicleModel(int id)

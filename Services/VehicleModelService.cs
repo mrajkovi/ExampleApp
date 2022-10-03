@@ -15,7 +15,6 @@ public interface IVehicleModelService
 }
 public class VehicleModelService : IVehicleModelService
 {
-
     private readonly IVehicleModelRepository _repository = null!;
     private readonly IVehicleMakeService _vehicleService = null!;
 
@@ -28,18 +27,8 @@ public class VehicleModelService : IVehicleModelService
     public async Task<List<VehicleModel>> GetVehicleModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize) 
     {
         var sortVehicles = new SortItems(sortOrder);
-        FilterItems? filterVehicles = null;
-        PaginateItems<VehicleModel>? paginateVehicles = null;
-
-        if (searchString != null) 
-        {
-            filterVehicles = new FilterItems(searchString);
-        }
-
-        if (!String.IsNullOrEmpty(pageNumber) && !String.IsNullOrEmpty(pageSize))
-        {
-            paginateVehicles = new PaginateItems<VehicleModel>(Int32.Parse(pageNumber), Int32.Parse(pageSize));
-        }
+        var filterVehicles = new FilterItems(searchString);
+        var paginateVehicles = new PaginateItems<VehicleModel>(pageNumber, pageSize);
 
         return await _repository.GetVehicleModels(sortVehicles, filterVehicles, paginateVehicles);
     }

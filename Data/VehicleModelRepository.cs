@@ -7,7 +7,7 @@ namespace ExampleApp.Data;
 
 public interface IVehicleModelRepository 
 {
-    public Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems? filterItems, PaginateItems<VehicleModel>? paginatedItems);
+    public Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems filterItems, PaginateItems<VehicleModel> paginatedItems);
     public Task<VehicleModel?> GetVehicleModelById(int id);
     public Task<int> CreateVehicleModel(VehicleModel vehicle);
     public Task<int> UpdateVehicleModel(VehicleModel newModel, VehicleModel oldModel);
@@ -22,7 +22,7 @@ public class VehicleModelRepository : IVehicleModelRepository
         _context = context;
     }
     
-    public async Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems? filterItems, PaginateItems<VehicleModel>? paginateItems)
+    public async Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems filterItems, PaginateItems<VehicleModel> paginateItems)
     {
         var models = _context.VehicleModel.AsQueryable();
         if (sortItems != null)
@@ -35,7 +35,7 @@ public class VehicleModelRepository : IVehicleModelRepository
         }
         if (paginateItems != null)
         {
-            models = paginateItems.paginate(models);
+            models = await paginateItems.paginate(models);
         }
 
         return await models.ToListAsync<VehicleModel>();

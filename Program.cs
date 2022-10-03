@@ -18,7 +18,7 @@ public class Program
         builder.Services.AddScoped<IVehicleModelRepository, VehicleModelRepository>();
         builder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
         builder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
-        builder.Services.AddControllers();
+        builder.Services.AddControllersWithViews();
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
         var app = builder.Build();
