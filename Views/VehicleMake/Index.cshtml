@@ -2,7 +2,7 @@
 @model VehiclesPaginationViewModel;
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Vehicles";
     var prevDisabled = @Model.PageNumber == 1 ? "disabled" : "";
     var nextDisabled = @Model.TotalSize <= @Model.PageSize * @Model.PageNumber ? "disabled" : "";
 }
@@ -31,6 +31,13 @@
                 <option selected="@(Model.PageSize==10)" value="10">10</option>
                 <option selected="@(Model.PageSize==15)" value="15">15</option>
             </select>
+            <select name="sortOrder" id="sortOrder" class="w-50 mt-2 form-select form-select-sm">
+                <option selected='' value="">Choose sort option</option>
+                <option selected='@(Model.SortOrder=="name_asc")' value="name_asc">Name ascending</option>
+                <option selected='@(Model.SortOrder=="name_desc")' value="name_desc">Name descending</option>
+                <option selected='@(Model.SortOrder=="abbrv_asc")' value="abbrv_asc">Abbreviation ascending</option>
+                <option selected='@(Model.SortOrder=="abbrv_desc")' value="abbrv_desc">Abbreviation descending</option>
+            </select>
             <input type="text" name="pageNumber" style="display:none" value="1">
             <button type="submit" class="btn btn-primary mt-3">Search</button>  
         </form>
@@ -45,7 +52,7 @@
         </tr>
     </thead>
     <tbody>
-    @foreach (var v in Model.vehicles)
+    @foreach (var v in Model.Vehicles)
     {
         <tr>
             <th>
@@ -84,7 +91,8 @@
                 class="page-link" 
                 asp-route-pageNumber="@(Model.PageNumber-1)"
                 asp-route-pageSize ="@(Model.PageSize)"
-                asp-route-searchString="@(Model.FilterString)">
+                asp-route-searchString="@(Model.FilterString)"
+                asp-route-sortOrder="@(Model.SortOrder)">
                     Previous
             </a>
         </li>
@@ -96,7 +104,8 @@
                 class="page-link" 
                 asp-route-searchString="@(Model.FilterString)" 
                 asp-route-pageSize ="@(Model.PageSize)"
-                asp-route-pageNumber="@(Model.PageNumber+1)">
+                asp-route-pageNumber="@(Model.PageNumber+1)"
+                asp-route-sortOrder="@(Model.SortOrder)">
                     Next
             </a>
         </li>

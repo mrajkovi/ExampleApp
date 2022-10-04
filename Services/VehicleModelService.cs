@@ -3,12 +3,15 @@ using ExampleApp.Data;
 using ExampleApp.Helpers.Sort;
 using ExampleApp.Helpers.Filter;
 using ExampleApp.Helpers.Paginate;
+using ExampleApp.ViewModels.Models;
+using ExampleApp.Helpers.QueryObjects;
 namespace ExampleApp.Services;
 
 public interface IVehicleModelService 
 {
-    public Task<List<VehicleModel>> GetVehicleModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize);
+    public Task GetVehicleModels(VehicleMakeQuery query, VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel);
     public Task<VehicleModel?> GetVehicleModelById(int id);
+    public Task<VehicleModel?> GetVehicleModelByName(string name);
     public Task<int> CreateVehicleModel(VehicleModel model);
     public Task<int> UpdateVehicleModel(int id, VehicleModel newModel);
     public Task<int> DeleteVehicleModel(int id);
@@ -24,13 +27,20 @@ public class VehicleModelService : IVehicleModelService
         _vehicleService = service;
     }
 
-    public async Task<List<VehicleModel>> GetVehicleModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize) 
+    public async Task GetVehicleModels(VehicleMakeQuery query, VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel) 
     {
-        var sortVehicles = new SortItems(sortOrder);
-        var filterVehicles = new FilterItems(searchString);
-        var paginateVehicles = new PaginateItems<VehicleModel>(pageNumber, pageSize);
+        var sortModels = new SortItems(query.sortOrder);
+        var filterModels = new FilterItems(query.searchString);
+        var paginateModels = new PaginateItems<VehicleModel>(query.pageNumber, query.pageSize);
 
-        return await _repository.GetVehicleModels(sortVehicles, filterVehicles, paginateVehicles);
+        var models = await _repository.GetVehicleModels(sortModels, filterModels, paginateModels);
+
+        vehiclesModelsPaginationViewModel.Models = models;
+        vehiclesModelsPaginationViewModel.TotalSize = paginateModels.totalSize;
+        vehiclesModelsPaginationViewModel.PageNumber = paginateModels.pageNumber;
+        vehiclesModelsPaginationViewModel.PageSize = paginateModels.pageSize;
+        vehiclesModelsPaginationViewModel.FilterString = filterModels.filterString;
+        vehiclesModelsPaginationViewModel.SortOrder = sortModels.SortOrder;
     }
     
     public async Task<VehicleModel?> GetVehicleModelById(int id)
@@ -38,16 +48,21 @@ public class VehicleModelService : IVehicleModelService
         return await _repository.GetVehicleModelById(id);
     }
 
+    public async Task<VehicleModel?> GetVehicleModelByName(string name)
+    {
+        return await _repository.GetVehicleModelByName(name);
+    }
+
     public async Task<int> CreateVehicleModel(VehicleModel model) 
     {
-        var existingModel = await this.GetVehicleModelById(model.Id);
+        var existingModel = await this.GetVehicleModelByName(model.Name);
 
         if (existingModel != null) 
         {
             return 404;
         }
 
-        var existingVehicle = _vehicleService.GetVehicleById(model.MakeId);
+        var existingVehicle = await _vehicleService.GetVehicleById(model.MakeId);
 
         if (existingVehicle == null) 
         {
@@ -59,9 +74,6 @@ public class VehicleModelService : IVehicleModelService
 
     public async Task<int> UpdateVehicleModel(int id, VehicleModel newModel)
     {
-        if (id != newModel.Id) {
-            return 400;
-        }
 
         var oldModel = await this.GetVehicleModelById(id);
 
@@ -73,6 +85,13 @@ public class VehicleModelService : IVehicleModelService
         var existingVehicle = await _vehicleService.GetVehicleById(newModel.MakeId);
 
         if (existingVehicle == null)
+        {
+            return 400;
+        }
+
+        var existingModel = await this.GetVehicleModelByName(newModel.Name);
+
+        if (existingModel != null && id != existingModel.Id)
         {
             return 400;
         }

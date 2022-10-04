@@ -36,11 +36,12 @@ public class VehicleMakeService : IVehicleMakeService
 
         var vehicles = await _repository.GetVehicles(sortVehicles, filterVehicles, paginateVehicles);
         
-        vehiclesPaginationViewModel.vehicles = vehicles;
+        vehiclesPaginationViewModel.Vehicles = vehicles;
         vehiclesPaginationViewModel.TotalSize = paginateVehicles.totalSize;
         vehiclesPaginationViewModel.PageNumber = paginateVehicles.pageNumber;
         vehiclesPaginationViewModel.PageSize = paginateVehicles.pageSize;
         vehiclesPaginationViewModel.FilterString = filterVehicles.filterString;
+        vehiclesPaginationViewModel.SortOrder = sortVehicles.SortOrder;
     }
     
     public async Task<VehicleMake?> GetVehicleById(int id)
@@ -67,9 +68,6 @@ public class VehicleMakeService : IVehicleMakeService
 
     public async Task<int> UpdateVehicle(int id, VehicleMake newVehicle)
     {
-        if (id != newVehicle.Id) {
-            return 400;
-        }
 
         var oldvehicle = await this.GetVehicleById(id);
 

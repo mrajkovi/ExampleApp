@@ -3,14 +3,21 @@ using ExampleApp.Models;
 namespace ExampleApp.Helpers.Sort;
 public class SortItems
 {
-    private string? _sortOrder;
+    public string SortOrder { get; private set; }
     public SortItems(string? sortOrder) 
     {
-         _sortOrder = sortOrder;
+        if (sortOrder != null)
+        {
+            SortOrder = sortOrder;
+        }
+        else
+        {
+            SortOrder = "";
+        }
     }
     public IQueryable<VehicleMake> sort(IQueryable<VehicleMake> items)
     { 
-        switch (_sortOrder)
+        switch (SortOrder)
         {   
             case "name_asc":
                 items = items.OrderBy(v => v.Name);
@@ -31,7 +38,7 @@ public class SortItems
     }
     public IQueryable<VehicleModel> sort(IQueryable<VehicleModel> items)
     {
-        switch (_sortOrder)
+        switch (SortOrder)
         {   
             case "name_asc":
                 items = items.OrderBy(v => v.Name);

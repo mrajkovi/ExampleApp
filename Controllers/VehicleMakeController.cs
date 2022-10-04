@@ -62,7 +62,6 @@ public class VehicleMakeController : Controller
     public async Task<IActionResult> UpdateVehicle(int id, VehicleViewModel vehicle)
     {
         VehicleMake updatedVehicle = new VehicleMake();
-        updatedVehicle.Id = id;
         updatedVehicle.Abbrv = vehicle.Abbrv;
         updatedVehicle.Name = vehicle.Name;
         var code = await _service.UpdateVehicle(id, updatedVehicle);

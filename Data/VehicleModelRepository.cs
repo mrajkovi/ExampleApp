@@ -9,6 +9,7 @@ public interface IVehicleModelRepository
 {
     public Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems filterItems, PaginateItems<VehicleModel> paginatedItems);
     public Task<VehicleModel?> GetVehicleModelById(int id);
+    public Task<VehicleModel?> GetVehicleModelByName(string name);
     public Task<int> CreateVehicleModel(VehicleModel vehicle);
     public Task<int> UpdateVehicleModel(VehicleModel newModel, VehicleModel oldModel);
     public Task<int> DeleteVehicleModel(VehicleModel model);
@@ -37,21 +38,60 @@ public class VehicleModelRepository : IVehicleModelRepository
         {
             models = await paginateItems.paginate(models);
         }
-
-        return await models.ToListAsync<VehicleModel>();
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try 
+        {
+            return await models.ToListAsync<VehicleModel>();
+        }
+        catch 
+        {
+            return new List<VehicleModel>();
+        } 
     }
     
+    public async Task<VehicleModel?> GetVehicleModelByName(string name)
+    {
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            return await _context.VehicleModel.Where(m => m.Name == name).FirstOrDefaultAsync();
+        }
+        catch
+        {
+            return null;
+        }
+    }
     
     public async Task<VehicleModel?> GetVehicleModelById(int id)
     {
-        return await _context.VehicleModel.FindAsync(id);
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            return await _context.VehicleModel.FindAsync(id);
+        }
+        catch
+        {
+            return null;
+        }    
     }
 
     public async Task<int> CreateVehicleModel(VehicleModel vehicleModel) 
     {
         _context.VehicleModel.Add(vehicleModel);
-        await _context.SaveChangesAsync();
-        return 201;
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            await _context.SaveChangesAsync();
+            return 204;
+        }
+        catch
+        {
+            return 500;
+        }
     }
 
     public async Task<int> UpdateVehicleModel(VehicleModel newModel, VehicleModel oldModel)
@@ -60,17 +100,33 @@ public class VehicleModelRepository : IVehicleModelRepository
         oldModel.MakeId = newModel.MakeId;
         oldModel.Abbrv = newModel.Abbrv;
         oldModel.Name = newModel.Name;
-
-        await _context.SaveChangesAsync();
-        
-        return 204;
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            await _context.SaveChangesAsync();
+            return 204;
+        }
+        catch
+        {
+            return 500;
+        }
     }
 
     public async Task<int> DeleteVehicleModel(VehicleModel model)
     {
         _context.VehicleModel.Remove(model);
-        await _context.SaveChangesAsync();
-        return 204;
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            await _context.SaveChangesAsync();
+            return 204;
+        }
+        catch
+        {
+            return 500;
+        }
     }
   
 }

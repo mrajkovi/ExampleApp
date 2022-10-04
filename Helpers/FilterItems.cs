@@ -31,7 +31,14 @@ public class FilterItems
     {
         if (this.filterString != "")
         {
-            return items.Where(v => v.Name.Contains(filterString) || v.Abbrv.Contains(filterString));
+            if (Int32.TryParse(this.filterString, out int result))
+            {
+                items = items.Where(m => m.MakeId == result);
+            } else 
+            {
+                items = items.Where(m => m.Name.Contains(filterString) || m.Abbrv.Contains(filterString));
+            }
+            return items;
         }
         else 
         {

@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using ExampleApp.Services;
 using ExampleApp.Models;
-
+using ExampleApp.Helpers.QueryObjects;
+using ExampleApp.ViewModels.Models;
 namespace ExampleApp.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
+[Route("[controller]")]
 public class VehicleModelController : Controller
 {
     private readonly IVehicleModelService _service = null!;
@@ -16,9 +16,11 @@ public class VehicleModelController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetVehicleModels(string? sortOrder, string? searchString, string? pageNumber, string? pageSize)
+    public async Task<IActionResult> ModelsView(VehicleMakeQuery query)
     {
-        return View("Index", await _service.GetVehicleModels(sortOrder, searchString, pageNumber, pageSize));
+        var vehiclesPaginationViewModel = new VehiclesModelsPaginationViewModel();
+        await _service.GetVehicleModels(query, vehiclesPaginationViewModel);
+        return View("Index", vehiclesPaginationViewModel);
     }
     [HttpGet("{id}")]
     public async Task<IActionResult> GetVehicleModel(int id)
@@ -31,43 +33,71 @@ public class VehicleModelController : Controller
         return Ok(vehicle);
     }
     [HttpPost]
-    public async Task<IActionResult> CreateVehicleModel(VehicleModel vehicleModel)
+    public async Task<IActionResult> CreateVehicleModel(VehicleModelsViewModel vehicleModelsViewModel)
     {
+        var vehicleModel = new VehicleModel();
+        vehicleModel.Name = vehicleModelsViewModel.Name;
+        vehicleModel.Abbrv = vehicleModelsViewModel.Abbrv;
+        vehicleModel.MakeId = vehicleModelsViewModel.MakeId;
         var code = await _service.CreateVehicleModel(vehicleModel);
-        // we will just return status 200
-        if (code == 201) {
-            return Ok();
-        } else {
-            return BadRequest();
-        }
-    }
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateVehicleModel(int id, VehicleModel vehicleModel)
-    {
-        var code = await _service.UpdateVehicleModel(id, vehicleModel);
+
         if (code == 204) 
         {
-            return NoContent();
-        } else if (code == 400) 
-        {
-            return BadRequest();
+            return RedirectToAction(nameof(ModelsView));
         } else 
         {
-            return NotFound();
+            return View("Error");
+        }
+    }
+
+    [HttpGet("update/{id}")]
+    public async Task<IActionResult> UpdateView(int id)
+    {
+        var vehicle = await _service.GetVehicleModelById(id);
+        if (vehicle == null)
+        {
+            return RedirectToAction(nameof(ModelsView));
+        }
+        var vehicleViewModel = new VehicleModelsViewModel();
+        vehicleViewModel.Name = vehicle.Name;
+        vehicleViewModel.Abbrv = vehicle.Abbrv;
+        vehicleViewModel.MakeId = vehicle.MakeId;
+        return View("Update", vehicleViewModel);
+    }
+    [HttpPost("update/{id}")]
+    public async Task<IActionResult> UpdateVehicleModel(int id, VehicleModelsViewModel modelModel)
+    {
+        VehicleModel model = new VehicleModel();
+        model.Name = modelModel.Name;
+        model.Abbrv = modelModel.Abbrv;
+        model.MakeId = modelModel.MakeId;
+        var code = await _service.UpdateVehicleModel(id, model);
+        if (code == 204) 
+        {
+            return RedirectToAction(nameof(UpdateView), new { id = id });
+        } else if (code == 400) 
+        {
+            //return BadRequest();
+            return View("Error");
+        } else 
+        {
+            //return NotFound();
+            return View("Error");
         }
         
     }
 
-    [HttpDelete("{id}")]
+    [HttpPost("delete/{id}")]
     public async Task<IActionResult> DeleteVehicleModel(int id)
     {
         var code = await _service.DeleteVehicleModel(id);
         if (code == 204) 
         {
-            return NoContent();
+            return RedirectToAction(nameof(ModelsView));
         } else 
         {
-            return NotFound();
+            // return NotFound();
+            return View("Error");
         }
     }
 }

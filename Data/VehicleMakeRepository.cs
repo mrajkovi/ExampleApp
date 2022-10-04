@@ -30,24 +30,61 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         vehicles = sortItems.sort(vehicles);
         vehicles = filterItems.filter(vehicles);
         vehicles = await paginateItems.paginate(vehicles);
-        return await vehicles.ToListAsync();
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            return await vehicles.ToListAsync();
+        }
+        catch
+        {
+            return new List<VehicleMake>();
+        }
+        
     }
     
     public async Task<VehicleMake?> GetVehicleById(int id)
     {
-        return await _context.VehicleMake.FindAsync(id);
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            return await _context.VehicleMake.FindAsync(id);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task<VehicleMake?> GetVehicleByName(string name)
     {
-        return await _context.VehicleMake.Where(v => v.Name == name).FirstOrDefaultAsync();
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            return await _context.VehicleMake.Where(v => v.Name == name).FirstOrDefaultAsync();
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public async Task<int> CreateVehicle(VehicleMake vehicle) 
     {
         _context.VehicleMake.Add(vehicle);
-        await _context.SaveChangesAsync();
-        return 201;
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            await _context.SaveChangesAsync();
+            return 201;
+        }
+        catch
+        {
+            return 500;
+        }
     }
 
     public async Task<int> UpdateVehicle(VehicleMake newVehicle, VehicleMake oldVehicle)
@@ -56,16 +93,33 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         oldVehicle.Abbrv = newVehicle.Abbrv;
         oldVehicle.Name = newVehicle.Name;
 
-        await _context.SaveChangesAsync();
-        
-        return 204;
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            await _context.SaveChangesAsync();
+            return 204;
+        }
+        catch
+        {
+            return 500;
+        }
     }
 
     public async Task<int> DeleteVehicle(VehicleMake vehicle)
     {
         _context.VehicleMake.Remove(vehicle);
-        await _context.SaveChangesAsync();
-        return 204;
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // services will handle bad results in that case
+        try
+        {
+            await _context.SaveChangesAsync();
+            return 204;
+        }
+        catch
+        {
+            return 500;
+        }
     }
   
 }
