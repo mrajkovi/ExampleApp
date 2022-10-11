@@ -3,11 +3,12 @@ using ExampleApp.Models;
 using ExampleApp.Helpers.Filter;
 using ExampleApp.Helpers.Paginate;
 using ExampleApp.Helpers.Sort;
-namespace ExampleApp.Data;
+using ExampleApp.Data;
+namespace ExampleApp.Repository;
 
 public interface IVehicleModelRepository 
 {
-    public Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems filterItems, PaginateItems<VehicleModel> paginatedItems);
+    public Task<List<VehicleModel>> GetVehicleModels(SortItems sortItems, FilterItems filterItems, PaginateItems<VehicleModel> paginateItems);
     public Task<VehicleModel?> GetVehicleModelById(int id);
     public Task<VehicleModel?> GetVehicleModelByName(string name);
     public Task<int> CreateVehicleModel(VehicleModel vehicle);

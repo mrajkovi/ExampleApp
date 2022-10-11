@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"]</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous" asp-append-version="true">
+    <link rel="stylesheet" href="~/lib/bootstrap-5.2.2-dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/ExampleApp.styles.css" asp-append-version="true" />
 </head>
 <body>
@@ -17,7 +17,7 @@
                             <a 
                                 class='nav-link @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "VehicleMake" ? "active" : "")' 
                                 asp-controller="VehicleMake" 
-                                asp-action="VehiclesView">
+                                asp-action="VehiclesIndex">
                                     Vehicles
                             </a>
                          </li>
@@ -25,7 +25,7 @@
                             <a 
                                 class='nav-link @(ViewContext?.RouteData?.Values["Controller"]?.ToString() == "VehicleModel" ? "active" : "")' 
                                 asp-controller="VehicleModel" 
-                                asp-action="ModelsView">
+                                asp-action="ModelsIndex">
                                     Models
                             </a>
                         </li>
@@ -41,7 +41,7 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+    <script src="~/lib/bootstrap-5.2.2-dist/js/bootstrap.bundle.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

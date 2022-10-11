@@ -2,8 +2,8 @@ namespace ExampleApp.Helpers.QueryObjects;
 
 public class VehicleMakeQuery 
 {
-    public string? sortOrder { get; set; }
-    public string? searchString { get; set; }
-    public string? pageNumber { get; set; }
-    public string? pageSize { get; set; }
+    public string? SortOrder { get; set; }
+    public string? SearchString { get; set; }
+    public string? PageNumber { get; set; }
+    public string? PageSize { get; set; }
 }

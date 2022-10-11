@@ -1,27 +1,29 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ExampleApp.Services;
-using ExampleApp.Models;
 using ExampleApp.ViewModels.Vehicles;
 using ExampleApp.Helpers.QueryObjects;
+using AutoMapper;
 namespace ExampleApp.Controllers;
 
 [Route("[controller]")]
 public class VehicleMakeController : Controller
 {
     private readonly IVehicleMakeService _service = null!;
+    private readonly IMapper _mapper = null!;
 
-    public VehicleMakeController(IVehicleMakeService service)
+    public VehicleMakeController(IVehicleMakeService service, IMapper mapper)
     {
         _service = service;
+        _mapper = mapper;
     }
 
     [HttpGet]
-    public async Task<IActionResult> VehiclesView(VehicleMakeQuery query)
+    public async Task<IActionResult> VehiclesIndex(VehicleMakeQuery query)
     {
-        var vehiclesPaginationViewModel = new VehiclesPaginationViewModel();
-        await _service.GetVehicles(query, vehiclesPaginationViewModel);
+        var vehiclesPaginationViewModel = await _service.GetVehicles(query);
         return View("Index", vehiclesPaginationViewModel);
     }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetVehicle(int id)
     {
@@ -32,6 +34,7 @@ public class VehicleMakeController : Controller
         }
         return Ok(vehicle);
     }
+
     [HttpGet("name/{name}")]
     public async Task<IActionResult> GetVehicle(string name)
     {
@@ -44,27 +47,22 @@ public class VehicleMakeController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateVehicle(VehiclesPaginationViewModel vehicle)
+    public async Task<IActionResult> CreateVehicle(VehiclesPaginationViewModel vehiclesPaginationViewModel)
     {
-        VehicleMake newVehicle = new VehicleMake();
-        newVehicle.Name = vehicle.Name;
-        newVehicle.Abbrv = vehicle.Abbrv;
-        var code = await _service.CreateVehicle(newVehicle);
+        var code = await _service.CreateVehicle(vehiclesPaginationViewModel);
         if (code == 201) 
         {
-            return RedirectToAction(nameof(VehiclesView));
+            return RedirectToAction(nameof(VehiclesIndex));
         } else 
         {
             return View("Error");
         }
     }
+
     [HttpPost("update/{id}")]
-    public async Task<IActionResult> UpdateVehicle(int id, VehicleViewModel vehicle)
+    public async Task<IActionResult> UpdateVehicle(int id, VehicleViewModel vehicleViewModel)
     {
-        VehicleMake updatedVehicle = new VehicleMake();
-        updatedVehicle.Abbrv = vehicle.Abbrv;
-        updatedVehicle.Name = vehicle.Name;
-        var code = await _service.UpdateVehicle(id, updatedVehicle);
+        var code = await _service.UpdateVehicle(id, vehicleViewModel);
         if (code == 204) 
         {
             return RedirectToAction(nameof(UpdateView), new { id = id });
@@ -85,11 +83,9 @@ public class VehicleMakeController : Controller
         var vehicle = await _service.GetVehicleById(id);
         if (vehicle == null)
         {
-            return RedirectToAction(nameof(VehiclesView));
+            return RedirectToAction(nameof(VehiclesIndex));
         }
-        var vehicleViewModel = new VehicleViewModel();
-        vehicleViewModel.Name = vehicle.Name;
-        vehicleViewModel.Abbrv = vehicle.Abbrv;
+        var vehicleViewModel = _mapper.Map<VehicleViewModel>(vehicle);
         return View("Update", vehicleViewModel);
     }
 
@@ -99,7 +95,7 @@ public class VehicleMakeController : Controller
         var code = await _service.DeleteVehicle(id);
         if (code == 204) 
         {
-            return RedirectToAction(nameof(VehiclesView));
+            return RedirectToAction(nameof(VehiclesIndex));
         } else 
         {
             // return NotFound();

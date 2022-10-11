@@ -3,7 +3,8 @@ using ExampleApp.Models;
 using ExampleApp.Helpers.Filter;
 using ExampleApp.Helpers.Paginate;
 using ExampleApp.Helpers.Sort;
-namespace ExampleApp.Data;
+using ExampleApp.Data;
+namespace ExampleApp.Repository;
 
 public interface IVehicleMakeRepository 
 {
@@ -30,7 +31,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         vehicles = sortItems.sort(vehicles);
         vehicles = filterItems.filter(vehicles);
         vehicles = await paginateItems.paginate(vehicles);
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
         // services will handle bad results in that case
         try
         {
@@ -45,7 +46,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     
     public async Task<VehicleMake?> GetVehicleById(int id)
     {
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
         // services will handle bad results in that case
         try
         {
@@ -59,7 +60,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
 
     public async Task<VehicleMake?> GetVehicleByName(string name)
     {
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
         // services will handle bad results in that case
         try
         {
@@ -74,7 +75,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     public async Task<int> CreateVehicle(VehicleMake vehicle) 
     {
         _context.VehicleMake.Add(vehicle);
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
         // services will handle bad results in that case
         try
         {
@@ -93,7 +94,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         oldVehicle.Abbrv = newVehicle.Abbrv;
         oldVehicle.Name = newVehicle.Name;
 
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
         // services will handle bad results in that case
         try
         {
@@ -109,7 +110,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     public async Task<int> DeleteVehicle(VehicleMake vehicle)
     {
         _context.VehicleMake.Remove(vehicle);
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
+        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
         // services will handle bad results in that case
         try
         {

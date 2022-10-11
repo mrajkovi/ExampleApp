@@ -3,23 +3,23 @@ using ExampleApp.Models;
 namespace ExampleApp.Helpers.Filter;
 public class FilterItems
 {
-    public string filterString { get; private set; }
+    public string FilterString { get; private set; }
     public FilterItems(string? filter) 
     {
         if (filter != null)
         {
-            this.filterString = filter;
+            FilterString = filter;
         } else 
         {
-            this.filterString = "";
+            FilterString = "";
         }
     }
 
     public IQueryable<VehicleMake> filter(IQueryable<VehicleMake> items)
     {
-        if (this.filterString != "")
+        if (FilterString != "")
         {
-            return items.Where(v => v.Name.Contains(filterString) || v.Abbrv.Contains(filterString));
+            return items.Where(v => v.Name.Contains(FilterString) || v.Abbrv.Contains(FilterString));
         }
         else 
         {
@@ -29,14 +29,14 @@ public class FilterItems
 
     public IQueryable<VehicleModel> filter(IQueryable<VehicleModel> items)
     {
-        if (this.filterString != "")
+        if (FilterString != "")
         {
-            if (Int32.TryParse(this.filterString, out int result))
+            if (Int32.TryParse(FilterString, out int result))
             {
                 items = items.Where(m => m.MakeId == result);
             } else 
             {
-                items = items.Where(m => m.Name.Contains(filterString) || m.Abbrv.Contains(filterString));
+                items = items.Where(m => m.Name.Contains(FilterString) || m.Abbrv.Contains(FilterString));
             }
             return items;
         }
