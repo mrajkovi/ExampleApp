@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ExampleApp.Service.Common;
-using ExampleApp.ViewModels.Vehicles;
+using ExampleApp.WebAPI.ViewModels.Vehicles;
 using ExampleApp.Common;
 using ExampleApp.Model.Common;
 using AutoMapper;
-namespace ExampleApp.Controllers;
+namespace ExampleApp.WebAPI.Controllers;
 
 [Route("[controller]")]
 public class VehicleMakeController : Controller

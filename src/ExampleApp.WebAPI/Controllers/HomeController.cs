@@ -1,7 +1,7 @@
 
 using Microsoft.AspNetCore.Mvc;
 
-namespace ExampleApp.Controllers;
+namespace ExampleApp.WebAPI.Controllers;
 [Route("/")]
 public class HomeController : Controller
 {

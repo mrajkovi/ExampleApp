@@ -1,8 +1,8 @@
 using AutoMapper;
 using ExampleApp.Model.Common;
 using ExampleApp.Common;
-using ExampleApp.ViewModels.Vehicles;
-using ExampleApp.ViewModels.Models;
+using ExampleApp.WebAPI.ViewModels.Vehicles;
+using ExampleApp.WebAPI.ViewModels.Models;
 
 public class MappingProfileWebAPI : Profile
 {

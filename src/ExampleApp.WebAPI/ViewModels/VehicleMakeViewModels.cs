@@ -1,7 +1,6 @@
 using ExampleApp.Model.Common;
-using ExampleApp.Repository;
 using System.ComponentModel.DataAnnotations;
-namespace ExampleApp.ViewModels.Vehicles;
+namespace ExampleApp.WebAPI.ViewModels.Vehicles;
 
 public class VehiclesPaginationViewModel
 {

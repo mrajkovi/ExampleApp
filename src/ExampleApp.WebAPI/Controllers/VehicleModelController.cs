@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ExampleApp.Service.Common;
 using ExampleApp.Common;
 using ExampleApp.Model.Common;
-using ExampleApp.ViewModels.Models;
+using ExampleApp.WebAPI.ViewModels.Models;
 using AutoMapper;
 namespace ExampleApp.Controllers;
 
