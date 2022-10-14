@@ -3,8 +3,8 @@
 namespace ExampleApp.Model;
 public class VehicleModel : IVehicleModel
 {
-    public int Id { get; set; }
-    public int MakeId { get; set; }
-    public string Name { get; set; } = null!;
-    public string Abbrv { get; set; } = null!;
+    public new int Id { get; set; }
+    public new int MakeId { get; set; }
+    public new string Name { get; set; } = null!;
+    public new string Abbrv { get; set; } = null!;
 }
