@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\ExampleApp.Service.Common\ExampleApp.Service.Common.csproj" />
-    <ProjectReference Include="..\ExampleApp.Repository.Common\ExampleApp.Repository.Common.csproj" />
-    <ProjectReference Include="..\ExampleApp.Model.Common\ExampleApp.Model.Common.csproj" />
-    <ProjectReference Include="..\ExampleApp.Common\ExampleApp.Common.csproj" />
-  </ItemGroup>
+   <ItemGroup>
+      <ProjectReference Include="..\ExampleApp.Service.Common\ExampleApp.Service.Common.csproj" />
+      <ProjectReference Include="..\ExampleApp.Repository.Common\ExampleApp.Repository.Common.csproj" />
+      <ProjectReference Include="..\ExampleApp.Model\ExampleApp.Model.csproj" />
+      <ProjectReference Include="..\ExampleApp.Common\ExampleApp.Common.csproj" />
+   </ItemGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+   <PropertyGroup>
+      <TargetFramework>net6.0</TargetFramework>
+      <ImplicitUsings>enable</ImplicitUsings>
+      <Nullable>enable</Nullable>
+   </PropertyGroup>
 
 </Project>

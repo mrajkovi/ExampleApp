@@ -1,7 +1,7 @@
-using ExampleApp.Model.Common;
+using ExampleApp.Model;
 using System.ComponentModel.DataAnnotations;
 
-namespace ExampleApp.WebAPI.ViewModels.Models;
+namespace ExampleApp.MVC.ViewModels.Models;
 
 public class VehiclesModelsPaginationViewModel
 {
@@ -13,7 +13,7 @@ public class VehiclesModelsPaginationViewModel
     public string Abbrv { get; set; } = null!;
     [Required]
     public int MakeId {get; set; }
-    public List<IVehicleModel> Models { get; set; } = null!;
+    public List<VehicleModel> Models { get; set; } = null!;
     public int TotalSize { get; set; }
     public int PageSize { get; set; }
     public int PageNumber { get; set; }

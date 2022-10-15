@@ -7,7 +7,7 @@ public class FilterItems
     public string FilterString { get; private set; }
     public FilterItems(string? filter) 
     {
-        if (filter != null)
+        if (!string.IsNullOrEmpty(filter))
         {
             FilterString = filter;
         } else 
@@ -15,7 +15,6 @@ public class FilterItems
             FilterString = "";
         }
     }
-
     public IQueryable<VehicleMakeEntity> filter(IQueryable<VehicleMakeEntity> items)
     {
         if (FilterString != "")
@@ -27,7 +26,6 @@ public class FilterItems
             return items;
         }
     }
-
     public IQueryable<VehicleModelEntity> filter(IQueryable<VehicleModelEntity> items)
     {
         if (FilterString != "")

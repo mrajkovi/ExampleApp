@@ -1,6 +1,6 @@
 using ExampleApp.Repository.Common;
 using ExampleApp.DAL;
-using ExampleApp.Model.Common;
+using ExampleApp.Model;
 using ExampleApp.Common;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -11,107 +11,46 @@ public class VehicleModelRepository : IVehicleModelRepository
 {
     private readonly ExampleAppContext _context = null!;
     private readonly IMapper _mapper = null!;
-
     public VehicleModelRepository(ExampleAppContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
-    
-    public async Task<List<IVehicleModel>> GetVehiclesModels(QueryModifier queryModifier)
+    public async Task<List<VehicleModel>> GetVehiclesModels(QueryDataSFP queryDataSFP)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = new SortItems(queryModifier.SortOrder).sort(models);
-        models = new FilterItems(queryModifier.SearchString).filter(models);
-        models = await new PaginateItems<VehicleModelEntity>(queryModifier.PageNumber, queryModifier.PageSize).paginate(models);
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
-        // services will handle bad results in that case
-        try 
-        {
-            return _mapper.Map<List<IVehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
-        }
-        catch 
-        {
-            return new List<IVehicleModel>();
-        } 
-    }
-    
-    public async Task<IVehicleModel?> GetVehicleModelByName(string name)
+        models = new SortItems(queryDataSFP.SortOrder).sort(models);
+        models = new FilterItems(queryDataSFP.SearchString).filter(models);
+        models = await new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize).paginate(models);
+        
+        return _mapper.Map<List<VehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
+    } 
+    public async Task<VehicleModel?> GetVehicleModelByName(string name)
     {
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
-        // services will handle bad results in that case
-        try
-        {
-            return _mapper.Map<IVehicleModel>(await _context.VehicleModel.Where(m => m.Name == name).FirstOrDefaultAsync());
-        }
-        catch
-        {
-            return null;
-        }
+        return _mapper.Map<VehicleModel>(await _context.VehicleModel.Where(m => m.Name == name).FirstOrDefaultAsync());
     }
-    
-    public async Task<IVehicleModel?> GetVehicleModelById(int id)
+    public async Task<VehicleModel?> GetVehicleModelById(int id)
     {
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
-        // services will handle bad results in that case
-        try
-        {
-            return _mapper.Map<IVehicleModel>(await _context.VehicleModel.FindAsync(id));
-        }
-        catch
-        {
-            return null;
-        }    
+        return _mapper.Map<VehicleModel>(await _context.VehicleModel.FindAsync(id));
     }
-
-    public async Task<bool> CreateVehicleModel(IVehicleModel vehicleModel) 
+    public async Task CreateVehicleModel(VehicleModel vehicleModel) 
     {
         _context.VehicleModel.Add(_mapper.Map<VehicleModelEntity>(vehicleModel));
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
-        // services will handle bad results in that case
-        try
-        {
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public async Task<bool> UpdateVehicleModel(IVehicleModel newModel, IVehicleModel oldModel)
-    {
         
+        await _context.SaveChangesAsync();
+    }
+    public async Task UpdateVehicleModel(VehicleModel newModel, VehicleModel oldModel)
+    {
         oldModel.MakeId = newModel.MakeId;
         oldModel.Abbrv = newModel.Abbrv;
         oldModel.Name = newModel.Name;
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
-        // services will handle bad results in that case
-        try
-        {
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        
+        await _context.SaveChangesAsync();
     }
-
-    public async Task<bool> DeleteVehicleModel(IVehicleModel model)
+    public async Task DeleteVehicleModel(VehicleModel model)
     {
         _context.VehicleModel.Remove(_mapper.Map<VehicleModelEntity>(model));
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then its our fault
-        // services will handle bad results in that case
-        try
-        {
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        
+        await _context.SaveChangesAsync();
     }
 }

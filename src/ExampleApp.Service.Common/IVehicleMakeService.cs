@@ -1,14 +1,14 @@
-﻿using ExampleApp.Model.Common;
+﻿using ExampleApp.Model;
 using ExampleApp.Common;
 
 namespace ExampleApp.Service.Common;
+
 public interface IVehicleMakeService 
 {
-    public Task<List<IVehicleMake>> GetVehicles(QueryModifier queryModifier);
-    public Task<IVehicleMake?> GetVehicleById(int id);
-
-    public Task<IVehicleMake?> GetVehicleByName(string name);
-    public Task<bool> CreateVehicle(IVehicleMake newVehicle);
-    public Task<bool> UpdateVehicle(int id, IVehicleMake newVehicle);
+    public Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP);
+    public Task<VehicleMake?> GetVehicleById(int id);
+    public Task<VehicleMake?> GetVehicleByName(string name);
+    public Task<bool> CreateVehicle(VehicleMake newVehicle);
+    public Task<bool> UpdateVehicle(int id, VehicleMake newVehicle);
     public Task<bool> DeleteVehicle(int id);
 }

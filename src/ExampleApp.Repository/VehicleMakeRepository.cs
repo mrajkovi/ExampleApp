@@ -1,5 +1,5 @@
 ﻿using ExampleApp.Repository.Common;
-using ExampleApp.Model.Common;
+using ExampleApp.Model;
 using ExampleApp.Common;
 using ExampleApp.DAL;
 using AutoMapper;
@@ -10,110 +10,45 @@ public class VehicleMakeRepository : IVehicleMakeRepository
 {
     private readonly ExampleAppContext _context = null!;
     private readonly IMapper _mapper;
-
     public VehicleMakeRepository(ExampleAppContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
     }
-
-    public async Task<List<IVehicleMake>> GetVehicles(QueryModifier queryModifier)
+    public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = new SortItems(queryModifier.SortOrder).sort(vehicles);
-        vehicles = new FilterItems(queryModifier.SearchString).filter(vehicles);
-        vehicles = await new PaginateItems<VehicleMakeEntity>(queryModifier.PageNumber, queryModifier.PageSize).paginate(vehicles);
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
-        // services will handle bad results in that case
-        try
-        {
-            return _mapper.Map<List<IVehicleMake>>(await vehicles.ToListAsync());
-        }
-        catch
-        {
-            return new List<IVehicleMake>();
-        }
+        vehicles = new SortItems(queryDataSFP.SortOrder).sort(vehicles);
+        vehicles = new FilterItems(queryDataSFP.SearchString).filter(vehicles);
+        vehicles = await new PaginateItems<VehicleMakeEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize).paginate(vehicles);
         
+        return _mapper.Map<List<VehicleMake>>(await vehicles.ToListAsync());
     }
-    
-    public async Task<IVehicleMake?> GetVehicleById(int id)
+    public async Task<VehicleMake?> GetVehicleById(int id)
     {
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
-        // services will handle bad results in that case
-        try
-        {
-            return _mapper.Map<IVehicleMake>(await _context.VehicleMake.FindAsync(id));
-        }
-        catch
-        {
-            return null;
-        }
+        return _mapper.Map<VehicleMake>(await _context.VehicleMake.FindAsync(id));
     }
-
-    public async Task<IVehicleMake?> GetVehicleByName(string name)
+    public async Task<VehicleMake?> GetVehicleByName(string name)
     {
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
-        // services will handle bad results in that case
-        try
-        {
-            return _mapper.Map<IVehicleMake>(await _context.VehicleMake.Where(v => v.Name == name).FirstOrDefaultAsync());
-        }
-        catch
-        {
-            return null;
-        }
+        return _mapper.Map<VehicleMake>(await _context.VehicleMake.Where(v => v.Name == name).FirstOrDefaultAsync());
     }
-
-    public async Task<bool> CreateVehicle(IVehicleMake vehicle) 
+    public async Task CreateVehicle(VehicleMake vehicle) 
     {
         _context.VehicleMake.Add(_mapper.Map<VehicleMakeEntity>(vehicle));
-
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
-        // services will handle bad results in that case
-        try
-        {
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public async Task<bool> UpdateVehicle(IVehicleMake newVehicle, IVehicleMake oldVehicle)
-    {
         
+        await _context.SaveChangesAsync();
+    }
+    public async Task UpdateVehicle(VehicleMake newVehicle, VehicleMake oldVehicle)
+    {
         oldVehicle.Abbrv = newVehicle.Abbrv;
         oldVehicle.Name = newVehicle.Name;
-
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
-        // services will handle bad results in that case
-        try
-        {
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+        
+        await _context.SaveChangesAsync();
     }
-
-    public async Task<bool> DeleteVehicle(IVehicleMake vehicle)
+    public async Task DeleteVehicle(VehicleMake vehicle)
     {
         _context.VehicleMake.Remove(_mapper.Map<VehicleMakeEntity>(_mapper.Map<VehicleMakeEntity>(vehicle)));
-        // we will keep it simple with try catch expression; we will assume that if something is wrong then it's our fault
-        // services will handle bad results in that case
-        try
-        {
-            await _context.SaveChangesAsync();
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
+
+        await _context.SaveChangesAsync();
     }
-  
 }

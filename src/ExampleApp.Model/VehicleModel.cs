@@ -1,10 +1,11 @@
-﻿using ExampleApp.Model.Common;
+﻿using ExampleApp.Model;
 
 namespace ExampleApp.Model;
-public class VehicleModel : IVehicleModel
+
+public class VehicleModel
 {
-    public new int Id { get; set; }
-    public new int MakeId { get; set; }
-    public new string Name { get; set; } = null!;
-    public new string Abbrv { get; set; } = null!;
+    public int Id { get; set; }
+    public int MakeId { get; set; }
+    public string Name { get; set; } = null!;
+    public string Abbrv { get; set; } = null!;
 }

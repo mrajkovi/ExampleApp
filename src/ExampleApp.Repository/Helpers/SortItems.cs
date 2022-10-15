@@ -1,12 +1,13 @@
 using ExampleApp.DAL;
 
 namespace ExampleApp.Repository;
+
 public class SortItems 
 {
     public string SortOrder { get; private set; }
     public SortItems(string? sortOrder) 
     {
-        if (sortOrder != null)
+        if (!string.IsNullOrEmpty(sortOrder))
         {
             SortOrder = sortOrder;
         }

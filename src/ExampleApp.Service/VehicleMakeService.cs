@@ -1,79 +1,71 @@
 ﻿using ExampleApp.Service.Common;
 using ExampleApp.Repository.Common;
-using ExampleApp.Model.Common;
+using ExampleApp.Model;
 using ExampleApp.Common;
 
 namespace ExampleApp.Service;
+
 public class VehicleMakeService : IVehicleMakeService
 {
-
     private readonly IVehicleMakeRepository _repository = null!;
-
     public VehicleMakeService(IVehicleMakeRepository repository)
     {
         _repository = repository;
     }
-
-    public async Task<List<IVehicleMake>> GetVehicles(QueryModifier queryModifier) 
+    public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP) 
     {
-        return await _repository.GetVehicles(queryModifier);
+        return await _repository.GetVehicles(queryDataSFP);
     }
-    
-    public async Task<IVehicleMake?> GetVehicleById(int id)
+    public async Task<VehicleMake?> GetVehicleById(int id)
     {
         return await _repository.GetVehicleById(id);
     }
-
-    public async Task<IVehicleMake?> GetVehicleByName(string name)
+    public async Task<VehicleMake?> GetVehicleByName(string name)
     {
         return await _repository.GetVehicleByName(name);
     }
-
-    public async Task<bool> CreateVehicle(IVehicleMake newVehicle) 
+    public async Task<bool> CreateVehicle(VehicleMake newVehicle) 
     {
-       
-        var existingVehicle = await this.GetVehicleByName(newVehicle.Name);
+        VehicleMake? existingVehicle = await this.GetVehicleByName(newVehicle.Name);
         
         if (existingVehicle != null) 
         {
             return false;
         }
-        
-        return await _repository.CreateVehicle(newVehicle);
+
+        await _repository.CreateVehicle(newVehicle);
+        return true;
     }
-
-    public async Task<bool> UpdateVehicle(int id, IVehicleMake newVehicle)
+    public async Task<bool> UpdateVehicle(int id, VehicleMake newVehicle)
     {
-
-        var oldVehicle = await this.GetVehicleById(id);
+        VehicleMake? oldVehicle = await this.GetVehicleById(id);
 
         if (oldVehicle == null) 
         {
             return false;
         }
 
-        var existingVehicle = await GetVehicleByName(newVehicle.Name);
+        VehicleMake? existingVehicle = await GetVehicleByName(newVehicle.Name);
 
-        if (existingVehicle == null)
+        if (existingVehicle != null)
         {
-            return await _repository.UpdateVehicle(newVehicle, oldVehicle);
+            await _repository.UpdateVehicle(newVehicle, oldVehicle);
+            return true;
         } else
         {
             return false;
         }
-        
     }
-
     public async Task<bool> DeleteVehicle(int id)
     {
-        var vehicle = await this.GetVehicleById(id);
+        VehicleMake? vehicle = await this.GetVehicleById(id);
         
         if (vehicle == null) 
         {
             return false;
         }
         
-        return await _repository.DeleteVehicle(vehicle);
+        await _repository.DeleteVehicle(vehicle);
+        return true;
     }
-  
 }
