@@ -21,7 +21,6 @@
       <ProjectReference Include="..\ExampleApp.Service.Common\ExampleApp.Service.Common.csproj" />
       <ProjectReference Include="..\ExampleApp.Service\ExampleApp.Service.csproj" />
       <ProjectReference Include="..\ExampleApp.Common\ExampleApp.Common.csproj" />
-      <ProjectReference Include="..\ExampleApp.Model.Common\ExampleApp.Model.Common.csproj" />
       <ProjectReference Include="..\ExampleApp.Model\ExampleApp.Model.csproj" />
       <ProjectReference Include="..\ExampleApp.DAL\ExampleApp.DAL.csproj" />
     </ItemGroup>
