@@ -23,7 +23,7 @@ public class VehicleModelRepository : IVehicleModelRepository
     public async Task<List<VehicleModel>> GetVehiclesModels(QueryDataSFP queryDataSFP)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = new SortItems(queryDataSFP.SortOrder).sort(models);
+        models = new SortItems<VehicleModelEntity>(queryDataSFP.SortOrder).sort(models);
         models = new FilterItems(queryDataSFP.SearchString).filter(models);
         models = await new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize).paginate(models);
         

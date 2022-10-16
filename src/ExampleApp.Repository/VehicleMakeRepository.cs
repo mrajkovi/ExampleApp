@@ -23,7 +23,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = new SortItems(queryDataSFP.SortOrder).sort(vehicles);
+        vehicles = new SortItems<VehicleMakeEntity>(queryDataSFP.SortOrder).sort(vehicles);
         vehicles = new FilterItems(queryDataSFP.SearchString).filter(vehicles);
         vehicles = await new PaginateItems<VehicleMakeEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize).paginate(vehicles);
         

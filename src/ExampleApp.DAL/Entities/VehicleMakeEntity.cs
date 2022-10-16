@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ExampleApp.DAL;
 
 [Index(nameof(Name), IsUnique = true)]
-public class VehicleMakeEntity
+public class VehicleMakeEntity : IVehicleBaseEntity
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;

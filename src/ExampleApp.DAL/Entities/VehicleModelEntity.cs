@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ExampleApp.DAL;
 
 [Index(nameof(Name), IsUnique = true)]
-public class VehicleModelEntity
+public class VehicleModelEntity : IVehicleBaseEntity
 {
     public int Id { get; set; }
     public int MakeId { get; set; } // <navigation property name>Id is foreign key
