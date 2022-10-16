@@ -12,6 +12,10 @@ public class Program
     public static void Main(string[] args)
     {
         var webApplicationBuilder = WebApplication.CreateBuilder(args);
+        
+        // Configure logging.
+        webApplicationBuilder.Logging.ClearProviders();
+        webApplicationBuilder.Logging.AddConsole();
 
         // Add database context.
         webApplicationBuilder.Services.AddDbContext<ExampleAppContext>(optionsAction =>
@@ -20,7 +24,7 @@ public class Program
         // Add automapper.
         webApplicationBuilder.Services.AddAutoMapper(configAction => 
         {
-            configAction.AddProfile<MappingProfileWebAPI>();
+            configAction.AddProfile<MappingProfileMVC>();
         });
 
         // Add services to the container.
@@ -28,6 +32,7 @@ public class Program
         webApplicationBuilder.Services.AddScoped<IVehicleModelRepository, VehicleModelRepository>();
         webApplicationBuilder.Services.AddScoped<IVehicleMakeService, VehicleMakeService>();
         webApplicationBuilder.Services.AddScoped<IVehicleModelService, VehicleModelService>();
+        
         webApplicationBuilder.Services.AddControllersWithViews();
         webApplicationBuilder.Services.AddRouting(options => options.LowercaseUrls = true);
 

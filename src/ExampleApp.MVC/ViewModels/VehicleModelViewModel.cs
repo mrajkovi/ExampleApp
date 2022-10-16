@@ -1,7 +1,7 @@
 using ExampleApp.Model;
 using System.ComponentModel.DataAnnotations;
 
-namespace ExampleApp.MVC.ViewModels.Models;
+namespace ExampleApp.MVC.ViewModels;
 
 public class VehiclesModelsPaginationViewModel
 {
@@ -21,7 +21,7 @@ public class VehiclesModelsPaginationViewModel
     public string FilterString { get; set;} = null!;
 }
 
-public class VehicleModelsViewModel
+public class VehicleModelViewModel
 {
     [Required]
     public string Name { get; set; } = null!;

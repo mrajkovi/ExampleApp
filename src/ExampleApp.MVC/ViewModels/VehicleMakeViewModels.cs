@@ -1,7 +1,7 @@
 using ExampleApp.Model;
 using System.ComponentModel.DataAnnotations;
 
-namespace ExampleApp.MVC.ViewModels.Vehicles;
+namespace ExampleApp.MVC.ViewModels;
 
 public class VehiclesPaginationViewModel
 {

@@ -1,7 +1,8 @@
-@using ExampleApp.MVC.ViewModels.Vehicles;
+@using ExampleApp.MVC.ViewModels;
 @model VehiclesPaginationViewModel;
 
 @{
+    Console.WriteLine($"{@Model.PageNumber} {@Model.PageSize}");
     ViewData["Title"] = "Vehicles";
     var prevDisabled = @Model.PageNumber == 1 ? "disabled" : "";
     var nextDisabled = @Model.TotalSize <= @Model.PageSize * @Model.PageNumber ? "disabled" : "";
