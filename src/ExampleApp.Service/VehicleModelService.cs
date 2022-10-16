@@ -14,6 +14,10 @@ public class VehicleModelService : IVehicleModelService
         _repository = repository;
         _vehicleService = service;
     }
+    public async Task<int> CountVehiclesModels()
+    {
+        return await _repository.CountVehiclesModels();
+    }
     public async Task<List<VehicleModel>> GetVehiclesModels(QueryDataSFP queryDataSFP) 
     {
         return await _repository.GetVehiclesModels(queryDataSFP);
@@ -28,9 +32,7 @@ public class VehicleModelService : IVehicleModelService
     }
     public async Task<bool> CreateVehicleModel(VehicleModel newVehicleModel) 
     {
-        VehicleModel? existingModel = await this.GetVehicleModelByName(newVehicleModel.Name);
-
-        if (existingModel != null) 
+        if (await _repository.CheckVehicleModelByName(newVehicleModel.Name)) 
         {
             return false;
         }
@@ -47,9 +49,7 @@ public class VehicleModelService : IVehicleModelService
     }
     public async Task<bool> UpdateVehicleModel(int id, VehicleModel newVehicleModel)
     {
-        VehicleModel? oldModel = await this.GetVehicleModelById(id);
-
-        if (oldModel == null) 
+        if (!await _repository.CheckVehicleModelById(id)) 
         {
             return false;
         }
@@ -61,26 +61,29 @@ public class VehicleModelService : IVehicleModelService
             return false;
         }
 
-        VehicleModel? existingModel = await this.GetVehicleModelByName(newVehicleModel.Name);
-
-        if (existingModel != null && id != existingModel.Id)
+        if (await _repository.CheckVehicleModelByName(newVehicleModel.Name))
         {
-            return false;
+            VehicleModel? oldVehicleModel = await _repository.GetVehicleModelByName(newVehicleModel.Name);
+            if (oldVehicleModel?.Id != id)
+            {
+                return false;
+            }
         }
-        
-        await _repository.UpdateVehicleModel(newVehicleModel, oldModel);
+    
+        newVehicleModel.Id = id;
+        await _repository.UpdateVehicleModel(newVehicleModel);
         return true;
     }
     public async Task<bool> DeleteVehicleModel(int id)
     {
-        VehicleModel? existingModel = await this.GetVehicleModelById(id);
-
-        if (existingModel == null) 
+        if (!await _repository.CheckVehicleModelById(id)) 
         {
             return false;
         }
         
-        await _repository.DeleteVehicleModel(existingModel);
+        VehicleModel vehicleModel = new VehicleModel();
+        vehicleModel.Id = id;
+        await _repository.DeleteVehicleModel(vehicleModel);
         return true;
     }
 }

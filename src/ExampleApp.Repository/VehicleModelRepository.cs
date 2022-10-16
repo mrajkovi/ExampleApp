@@ -16,6 +16,10 @@ public class VehicleModelRepository : IVehicleModelRepository
         _context = context;
         _mapper = mapper;
     }
+    public async Task<int> CountVehiclesModels()
+    {
+        return await _context.VehicleModel.CountAsync();
+    }
     public async Task<List<VehicleModel>> GetVehiclesModels(QueryDataSFP queryDataSFP)
     {
         var models = _context.VehicleModel.AsQueryable();
@@ -27,11 +31,19 @@ public class VehicleModelRepository : IVehicleModelRepository
     } 
     public async Task<VehicleModel?> GetVehicleModelByName(string name)
     {
-        return _mapper.Map<VehicleModel>(await _context.VehicleModel.Where(m => m.Name == name).FirstOrDefaultAsync());
+        return _mapper.Map<VehicleModel>(await _context.VehicleModel.Where(m => m.Name == name).AsNoTracking().FirstOrDefaultAsync());
     }
     public async Task<VehicleModel?> GetVehicleModelById(int id)
     {
         return _mapper.Map<VehicleModel>(await _context.VehicleModel.FindAsync(id));
+    }
+    public async Task<bool> CheckVehicleModelById(int id)
+    {
+        return await _context.VehicleModel.AnyAsync(v => v.Id.Equals(id));
+    }
+    public async Task<bool> CheckVehicleModelByName(string name)
+    {
+        return await _context.VehicleModel.AnyAsync(v => v.Name.Equals(name));
     }
     public async Task CreateVehicleModel(VehicleModel vehicleModel) 
     {
@@ -39,12 +51,10 @@ public class VehicleModelRepository : IVehicleModelRepository
         
         await _context.SaveChangesAsync();
     }
-    public async Task UpdateVehicleModel(VehicleModel newModel, VehicleModel oldModel)
+    public async Task UpdateVehicleModel(VehicleModel updatedModel)
     {
-        oldModel.MakeId = newModel.MakeId;
-        oldModel.Abbrv = newModel.Abbrv;
-        oldModel.Name = newModel.Name;
-        
+        _context.VehicleModel.Update(_mapper.Map<VehicleModelEntity>(updatedModel));
+
         await _context.SaveChangesAsync();
     }
     public async Task DeleteVehicleModel(VehicleModel model)

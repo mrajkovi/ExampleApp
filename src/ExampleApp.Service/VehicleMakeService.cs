@@ -12,6 +12,10 @@ public class VehicleMakeService : IVehicleMakeService
     {
         _repository = repository;
     }
+    public async Task<int> CountVehicles()
+    {
+        return await _repository.CountVehicles();
+    }
     public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP) 
     {
         return await _repository.GetVehicles(queryDataSFP);
@@ -25,10 +29,8 @@ public class VehicleMakeService : IVehicleMakeService
         return await _repository.GetVehicleByName(name);
     }
     public async Task<bool> CreateVehicle(VehicleMake newVehicle) 
-    {
-        VehicleMake? existingVehicle = await this.GetVehicleByName(newVehicle.Name);
-        
-        if (existingVehicle != null) 
+    {        
+        if (await _repository.CheckVehicleByName(newVehicle.Name)) 
         {
             return false;
         }
@@ -38,33 +40,34 @@ public class VehicleMakeService : IVehicleMakeService
     }
     public async Task<bool> UpdateVehicle(int id, VehicleMake newVehicle)
     {
-        VehicleMake? oldVehicle = await this.GetVehicleById(id);
-
-        if (oldVehicle == null) 
+        if (!await _repository.CheckVehicleById(id)) 
         {
             return false;
         }
 
-        VehicleMake? existingVehicle = await GetVehicleByName(newVehicle.Name);
-
-        if (existingVehicle != null)
+        if (await _repository.CheckVehicleByName(newVehicle.Name))
         {
-            await _repository.UpdateVehicle(newVehicle, oldVehicle);
-            return true;
-        } else
-        {
-            return false;
-        }
+            VehicleMake? oldVehicle = await _repository.GetVehicleByName(newVehicle.Name);
+            if (oldVehicle?.Id != id)
+            {
+                return false;
+            }
+            
+        } 
+        newVehicle.Id = id;
+        await _repository.UpdateVehicle(newVehicle);
+        return true;
     }
     public async Task<bool> DeleteVehicle(int id)
-    {
-        VehicleMake? vehicle = await this.GetVehicleById(id);
-        
-        if (vehicle == null) 
+    {     
+        if (!await _repository.CheckVehicleById(id)) 
         {
             return false;
         }
-        
+
+        VehicleMake vehicle = new VehicleMake();
+        vehicle.Id = id;
+    
         await _repository.DeleteVehicle(vehicle);
         return true;
     }

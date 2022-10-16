@@ -15,6 +15,11 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         _context = context;
         _mapper = mapper;
     }
+
+    public async Task<int> CountVehicles()
+    {
+        return await _context.VehicleMake.CountAsync();
+    }
     public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
@@ -28,9 +33,17 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     {
         return _mapper.Map<VehicleMake>(await _context.VehicleMake.FindAsync(id));
     }
+    public async Task<bool> CheckVehicleByName(string name)
+    {
+        return await _context.VehicleMake.AnyAsync(v => v.Name.Equals(name));
+    }
+    public async Task<bool> CheckVehicleById(int id)
+    {
+        return await _context.VehicleMake.AnyAsync(v => v.Id.Equals(id));
+    }
     public async Task<VehicleMake?> GetVehicleByName(string name)
     {
-        return _mapper.Map<VehicleMake>(await _context.VehicleMake.Where(v => v.Name == name).FirstOrDefaultAsync());
+        return _mapper.Map<VehicleMake>(await _context.VehicleMake.Where(v => v.Name == name).AsNoTracking().FirstOrDefaultAsync());
     }
     public async Task CreateVehicle(VehicleMake vehicle) 
     {
@@ -38,16 +51,15 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         
         await _context.SaveChangesAsync();
     }
-    public async Task UpdateVehicle(VehicleMake newVehicle, VehicleMake oldVehicle)
+    public async Task UpdateVehicle(VehicleMake newVehicle)
     {
-        oldVehicle.Abbrv = newVehicle.Abbrv;
-        oldVehicle.Name = newVehicle.Name;
-        
+        _context.Update(_mapper.Map<VehicleMakeEntity>(newVehicle));
+
         await _context.SaveChangesAsync();
     }
     public async Task DeleteVehicle(VehicleMake vehicle)
     {
-        _context.VehicleMake.Remove(_mapper.Map<VehicleMakeEntity>(_mapper.Map<VehicleMakeEntity>(vehicle)));
+        _context.VehicleMake.Remove(_mapper.Map<VehicleMakeEntity>(vehicle));
 
         await _context.SaveChangesAsync();
     }

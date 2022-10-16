@@ -5,6 +5,7 @@ namespace ExampleApp.Service.Common;
 
 public interface IVehicleMakeService 
 {
+    public Task<int> CountVehicles();
     public Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP);
     public Task<VehicleMake?> GetVehicleById(int id);
     public Task<VehicleMake?> GetVehicleByName(string name);

@@ -13,7 +13,8 @@ public class PaginateItems<T>
         {
             PageNumber = pageNumberResult;
             PageSize = pageSizeResult;
-        } else
+        } 
+        else
         {
             PageNumber = 1;
             PageSize = 5;
