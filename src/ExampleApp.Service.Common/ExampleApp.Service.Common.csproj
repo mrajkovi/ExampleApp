@@ -3,6 +3,7 @@
     <ItemGroup>
         <ProjectReference Include="..\ExampleApp.Model\ExampleApp.Model.csproj" />
         <ProjectReference Include="..\ExampleApp.Common\ExampleApp.Common.csproj" />
+        <ProjectReference Include="..\ExampleApp.DAL\ExampleApp.DAL.csproj" />
     </ItemGroup>
 
     <PropertyGroup>

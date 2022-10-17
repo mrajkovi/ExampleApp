@@ -2,6 +2,7 @@
 using ExampleApp.Repository.Common;
 using ExampleApp.Model;
 using ExampleApp.Common;
+using ExampleApp.DAL;
 
 namespace ExampleApp.Service;
 
@@ -16,9 +17,9 @@ public class VehicleMakeService : IVehicleMakeService
     {
         return await _repository.CountVehicles();
     }
-    public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP) 
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems) 
     {
-        return await _repository.GetVehicles(queryDataSFP);
+        return await _repository.GetVehicles(sortItems, filterItems, paginateItems);
     }
     public async Task<VehicleMake?> GetVehicleById(int id)
     {

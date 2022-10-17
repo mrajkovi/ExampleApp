@@ -1,6 +1,6 @@
 using ExampleApp.DAL;
 
-namespace ExampleApp.Repository;
+namespace ExampleApp.Common;
 
 public class SortItems<T> where T : IVehicleBaseEntity
 {

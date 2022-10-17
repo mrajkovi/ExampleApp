@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace ExampleApp.Repository;
+namespace ExampleApp.Common;
 
 public class PaginateItems<T>
 {

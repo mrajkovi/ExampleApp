@@ -20,12 +20,12 @@ public class VehicleModelRepository : IVehicleModelRepository
     {
         return await _context.VehicleModel.CountAsync();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(QueryDataSFP queryDataSFP)
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleModelEntity> paginateItems)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = new SortItems<VehicleModelEntity>(queryDataSFP.SortOrder).sort(models);
-        models = new FilterItems(queryDataSFP.SearchString).filter(models);
-        models = await new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize).paginate(models);
+        models = sortItems.sort(models);
+        models = filterItems.filter(models);
+        models = await paginateItems.paginate(models);
         
         return _mapper.Map<List<VehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
     } 

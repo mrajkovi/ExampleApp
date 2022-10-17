@@ -20,12 +20,12 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     {
         return await _context.VehicleMake.CountAsync();
     }
-    public async Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP)
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = new SortItems<VehicleMakeEntity>(queryDataSFP.SortOrder).sort(vehicles);
-        vehicles = new FilterItems(queryDataSFP.SearchString).filter(vehicles);
-        vehicles = await new PaginateItems<VehicleMakeEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize).paginate(vehicles);
+        vehicles = sortItems.sort(vehicles);
+        vehicles = filterItems.filter(vehicles);
+        vehicles = await paginateItems.paginate(vehicles);
         
         return _mapper.Map<List<VehicleMake>>(await vehicles.ToListAsync());
     }

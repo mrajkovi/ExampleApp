@@ -1,4 +1,5 @@
 ﻿using ExampleApp.Common;
+using ExampleApp.DAL;
 using ExampleApp.Model;
 
 namespace ExampleApp.Repository.Common;
@@ -6,7 +7,7 @@ namespace ExampleApp.Repository.Common;
 public interface IVehicleMakeRepository 
 {
     public Task<int> CountVehicles();
-    public Task<List<VehicleMake>> GetVehicles(QueryDataSFP queryDataSFP);
+    public Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems);
     public Task<VehicleMake?> GetVehicleById(int id);
     public Task<VehicleMake?> GetVehicleByName(string name);
     public Task<bool> CheckVehicleById(int id);

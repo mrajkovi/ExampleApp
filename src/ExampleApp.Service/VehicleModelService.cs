@@ -2,6 +2,7 @@ using ExampleApp.Service.Common;
 using ExampleApp.Repository.Common;
 using ExampleApp.Common;
 using ExampleApp.Model;
+using ExampleApp.DAL;
 
 namespace ExampleApp.Service;
 
@@ -18,9 +19,9 @@ public class VehicleModelService : IVehicleModelService
     {
         return await _repository.CountVehiclesModels();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(QueryDataSFP queryDataSFP) 
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleModelEntity> paginateItems) 
     {
-        return await _repository.GetVehiclesModels(queryDataSFP);
+        return await _repository.GetVehiclesModels(sortItems, filterItems, paginateItems);
     }
     public async Task<VehicleModel?> GetVehicleModelById(int id)
     {

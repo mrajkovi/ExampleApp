@@ -4,6 +4,7 @@ using ExampleApp.Common;
 using ExampleApp.Model;
 using ExampleApp.MVC.ViewModels;
 using ExampleApp.MVC.Common;
+using ExampleApp.DAL;
 using AutoMapper;
 
 namespace ExampleApp.MVC.Controllers;
@@ -26,11 +27,17 @@ public class VehicleModelController : Controller
         _logger.LogInformation(EventID.GetItems, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            List<VehicleModel> models = await _service.GetVehiclesModels(queryDataSFP);
+            var sortItems = new SortItems<VehicleModelEntity>(queryDataSFP.SortOrder);
+            var filterItems = new FilterItems(queryDataSFP.SearchString);
+            var paginateItems = new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
+
+            List<VehicleModel> models = await _service.GetVehiclesModels(sortItems, filterItems, paginateItems);
+
             VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel = new VehiclesModelsPaginationViewModel();
             vehiclesModelsPaginationViewModel = _mapper.Map<VehiclesModelsPaginationViewModel>(queryDataSFP);
             vehiclesModelsPaginationViewModel.Models = models;
             vehiclesModelsPaginationViewModel.TotalSize = await _service.CountVehiclesModels();
+            
             return View("Index", vehiclesModelsPaginationViewModel);
         }
         catch(Exception exception)
