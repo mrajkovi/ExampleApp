@@ -19,7 +19,7 @@ public class VehicleModelService : IVehicleModelService
     {
         return await _repository.CountVehiclesModels();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleModelEntity> paginateItems) 
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems<VehicleModelEntity> filterItems, PaginateItems<VehicleModelEntity> paginateItems) 
     {
         return await _repository.GetVehiclesModels(sortItems, filterItems, paginateItems);
     }
@@ -27,13 +27,14 @@ public class VehicleModelService : IVehicleModelService
     {
         return await _repository.GetVehicleModelById(id);
     }
-    public async Task<VehicleModel?> GetVehicleModelByName(string name)
+    public async Task<VehicleModel?> GetVehicleModelByFilter(FilterItems<VehicleModelEntity> filterItems)
     {
-        return await _repository.GetVehicleModelByName(name);
+        return await _repository.GetVehicleModelByFilter(filterItems);
     }
     public async Task<bool> CreateVehicleModel(VehicleModel newVehicleModel) 
     {
-        if (await _repository.CheckVehicleModelByName(newVehicleModel.Name)) 
+        var filterItems = new FilterItems<VehicleModelEntity>(newVehicleModel.Name);
+        if (await _repository.CheckVehicleModelByFilter(filterItems)) 
         {
             return false;
         }
@@ -62,9 +63,10 @@ public class VehicleModelService : IVehicleModelService
             return false;
         }
 
-        if (await _repository.CheckVehicleModelByName(newVehicleModel.Name))
+        var filterItems = new FilterItems<VehicleModelEntity>(newVehicleModel.Name);
+        if (await _repository.CheckVehicleModelByFilter(filterItems))
         {
-            VehicleModel? oldVehicleModel = await _repository.GetVehicleModelByName(newVehicleModel.Name);
+            VehicleModel? oldVehicleModel = await _repository.GetVehicleModelByFilter(filterItems);
             if (oldVehicleModel?.Id != id)
             {
                 return false;

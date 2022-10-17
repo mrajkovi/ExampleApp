@@ -28,12 +28,12 @@ public class VehicleMakeController : Controller
         try 
         {
             var sortItems = new SortItems<VehicleMakeEntity>(queryDataSFP.SortOrder);
-            var filterItems = new FilterItems(queryDataSFP.SearchString);
+            var filterItems = new FilterItems<VehicleMakeEntity>(queryDataSFP.SearchString);
             var paginateItems = new PaginateItems<VehicleMakeEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
-            List<VehicleMake> vehicles = await _service.GetVehicles(sortItems, filterItems, paginateItems);
-            VehiclesPaginationViewModel vehiclesPaginationViewModel = new VehiclesPaginationViewModel();
 
-            vehiclesPaginationViewModel = _mapper.Map<VehiclesPaginationViewModel>(queryDataSFP);
+            List<VehicleMake> vehicles = await _service.GetVehicles(sortItems, filterItems, paginateItems);
+
+            VehiclesPaginationViewModel vehiclesPaginationViewModel = _mapper.Map<VehiclesPaginationViewModel>(queryDataSFP);
             vehiclesPaginationViewModel.Vehicles = vehicles;
             vehiclesPaginationViewModel.TotalSize = await _service.CountVehicles();
 
@@ -71,7 +71,8 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try 
         {
-            VehicleMake? vehicle = await _service.GetVehicleByName(name);
+            FilterItems<VehicleMakeEntity> filterItems = new FilterItems<VehicleMakeEntity>(name);
+            VehicleMake? vehicle = await _service.GetVehicleByFilter(filterItems);
             if (vehicle == null) 
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
@@ -114,8 +115,7 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.UpdateItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try 
         {
-            VehicleMake newVehicle = new VehicleMake();
-            newVehicle = _mapper.Map<VehicleMake>(vehicleViewModel);
+            VehicleMake newVehicle = _mapper.Map<VehicleMake>(vehicleViewModel);
             bool succeeded = await _service.UpdateVehicle(id, newVehicle);
             if (succeeded) 
             {

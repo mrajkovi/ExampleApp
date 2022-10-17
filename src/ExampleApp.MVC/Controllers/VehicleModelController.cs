@@ -28,16 +28,15 @@ public class VehicleModelController : Controller
         try
         {
             var sortItems = new SortItems<VehicleModelEntity>(queryDataSFP.SortOrder);
-            var filterItems = new FilterItems(queryDataSFP.SearchString);
+            var filterItems = new FilterItems<VehicleModelEntity>(queryDataSFP.SearchString);
             var paginateItems = new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
 
             List<VehicleModel> models = await _service.GetVehiclesModels(sortItems, filterItems, paginateItems);
 
-            VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel = new VehiclesModelsPaginationViewModel();
-            vehiclesModelsPaginationViewModel = _mapper.Map<VehiclesModelsPaginationViewModel>(queryDataSFP);
+            VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel = _mapper.Map<VehiclesModelsPaginationViewModel>(queryDataSFP);
             vehiclesModelsPaginationViewModel.Models = models;
             vehiclesModelsPaginationViewModel.TotalSize = await _service.CountVehiclesModels();
-            
+
             return View("Index", vehiclesModelsPaginationViewModel);
         }
         catch(Exception exception)

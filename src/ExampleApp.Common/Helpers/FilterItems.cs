@@ -2,7 +2,7 @@ using ExampleApp.DAL;
 
 namespace ExampleApp.Common;
 
-public class FilterItems
+public class FilterItems<T> where T : IVehicleBaseEntity
 {
     public string FilterString { get; private set; }
     public FilterItems(string? filter) 
@@ -10,7 +10,8 @@ public class FilterItems
         if (!string.IsNullOrEmpty(filter))
         {
             FilterString = filter;
-        } else 
+        } 
+        else 
         {
             FilterString = "";
         }
@@ -33,7 +34,8 @@ public class FilterItems
             if (Int32.TryParse(FilterString, out int result))
             {
                 items = items.Where(m => m.MakeId == result);
-            } else 
+            } 
+            else 
             {
                 items = items.Where(m => m.Name.Contains(FilterString) || m.Abbrv.Contains(FilterString));
             }
@@ -43,5 +45,13 @@ public class FilterItems
         {
             return items;
         }
+    }
+    public IQueryable<T> filterByName(IQueryable<T> items)
+    {
+        if (FilterString != "")
+        {
+            return items.Where(v => v.Name.Equals(FilterString));
+        }
+        return items;
     }
 }

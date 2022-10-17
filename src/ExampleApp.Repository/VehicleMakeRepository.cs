@@ -20,7 +20,7 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     {
         return await _context.VehicleMake.CountAsync();
     }
-    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems<VehicleMakeEntity> filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
         vehicles = sortItems.sort(vehicles);
@@ -33,17 +33,21 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     {
         return _mapper.Map<VehicleMake>(await _context.VehicleMake.FindAsync(id));
     }
-    public async Task<bool> CheckVehicleByName(string name)
+    public async Task<bool> CheckVehicleByFilter(FilterItems<VehicleMakeEntity> filterItems)
     {
-        return await _context.VehicleMake.AnyAsync(v => v.Name.Equals(name));
+        var vehicles = _context.VehicleMake.AsQueryable();
+        vehicles = filterItems.filterByName(vehicles);
+        return await vehicles.AnyAsync();
     }
     public async Task<bool> CheckVehicleById(int id)
     {
         return await _context.VehicleMake.AnyAsync(v => v.Id.Equals(id));
     }
-    public async Task<VehicleMake?> GetVehicleByName(string name)
+    public async Task<VehicleMake?> GetVehicleByFilter(FilterItems<VehicleMakeEntity> filterItems)
     {
-        return _mapper.Map<VehicleMake>(await _context.VehicleMake.Where(v => v.Name == name).AsNoTracking().FirstOrDefaultAsync());
+        var vehicles = _context.VehicleMake.AsQueryable().AsNoTracking();
+        vehicles = filterItems.filterByName(vehicles);
+        return _mapper.Map<VehicleMake>(await vehicles.FirstOrDefaultAsync());
     }
     public async Task CreateVehicle(VehicleMake vehicle) 
     {

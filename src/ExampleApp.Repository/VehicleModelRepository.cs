@@ -20,7 +20,7 @@ public class VehicleModelRepository : IVehicleModelRepository
     {
         return await _context.VehicleModel.CountAsync();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleModelEntity> paginateItems)
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems<VehicleModelEntity> filterItems, PaginateItems<VehicleModelEntity> paginateItems)
     {
         var models = _context.VehicleModel.AsQueryable();
         models = sortItems.sort(models);
@@ -29,9 +29,11 @@ public class VehicleModelRepository : IVehicleModelRepository
         
         return _mapper.Map<List<VehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
     } 
-    public async Task<VehicleModel?> GetVehicleModelByName(string name)
+    public async Task<VehicleModel?> GetVehicleModelByFilter(FilterItems<VehicleModelEntity> filterItems)
     {
-        return _mapper.Map<VehicleModel>(await _context.VehicleModel.Where(m => m.Name == name).AsNoTracking().FirstOrDefaultAsync());
+        var models = _context.VehicleModel.AsQueryable().AsNoTracking();
+        models = filterItems.filterByName(models);
+        return _mapper.Map<VehicleModel>(await models.FirstOrDefaultAsync());
     }
     public async Task<VehicleModel?> GetVehicleModelById(int id)
     {
@@ -41,9 +43,11 @@ public class VehicleModelRepository : IVehicleModelRepository
     {
         return await _context.VehicleModel.AnyAsync(v => v.Id.Equals(id));
     }
-    public async Task<bool> CheckVehicleModelByName(string name)
+    public async Task<bool> CheckVehicleModelByFilter(FilterItems<VehicleModelEntity> filterItems)
     {
-        return await _context.VehicleModel.AnyAsync(v => v.Name.Equals(name));
+        var models = _context.VehicleModel.AsQueryable();
+        models = filterItems.filterByName(models);
+        return await models.AnyAsync();
     }
     public async Task CreateVehicleModel(VehicleModel vehicleModel) 
     {

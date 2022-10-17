@@ -17,7 +17,7 @@ public class VehicleMakeService : IVehicleMakeService
     {
         return await _repository.CountVehicles();
     }
-    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems) 
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems<VehicleMakeEntity> filterItems, PaginateItems<VehicleMakeEntity> paginateItems) 
     {
         return await _repository.GetVehicles(sortItems, filterItems, paginateItems);
     }
@@ -25,13 +25,14 @@ public class VehicleMakeService : IVehicleMakeService
     {
         return await _repository.GetVehicleById(id);
     }
-    public async Task<VehicleMake?> GetVehicleByName(string name)
+    public async Task<VehicleMake?> GetVehicleByFilter(FilterItems<VehicleMakeEntity> filterItems)
     {
-        return await _repository.GetVehicleByName(name);
+        return await _repository.GetVehicleByFilter(filterItems);
     }
     public async Task<bool> CreateVehicle(VehicleMake newVehicle) 
     {        
-        if (await _repository.CheckVehicleByName(newVehicle.Name)) 
+        var filterItems = new FilterItems<VehicleMakeEntity>(newVehicle.Name);
+        if (await _repository.CheckVehicleByFilter(filterItems)) 
         {
             return false;
         }
@@ -46,9 +47,11 @@ public class VehicleMakeService : IVehicleMakeService
             return false;
         }
 
-        if (await _repository.CheckVehicleByName(newVehicle.Name))
+        var filterItems = new FilterItems<VehicleMakeEntity>(newVehicle.Name);
+
+        if (await _repository.CheckVehicleByFilter(filterItems))
         {
-            VehicleMake? oldVehicle = await _repository.GetVehicleByName(newVehicle.Name);
+            VehicleMake? oldVehicle = await _repository.GetVehicleByFilter(filterItems);
             if (oldVehicle?.Id != id)
             {
                 return false;
