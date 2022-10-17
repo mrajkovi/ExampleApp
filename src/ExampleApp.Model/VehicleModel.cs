@@ -1,6 +1,4 @@
-﻿using ExampleApp.Model;
-
-namespace ExampleApp.Model;
+﻿namespace ExampleApp.Model;
 
 public class VehicleModel
 {
