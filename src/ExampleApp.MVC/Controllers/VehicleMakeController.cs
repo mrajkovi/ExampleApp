@@ -32,7 +32,6 @@ public class VehicleMakeController : Controller
             var paginateItems = new PaginateItems<VehicleMakeEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
 
             List<VehicleMake> vehicles = await _service.GetVehicles(sortItems, filterItems, paginateItems);
-
             VehiclesPaginationViewModel vehiclesPaginationViewModel = _mapper.Map<VehiclesPaginationViewModel>(queryDataSFP);
             vehiclesPaginationViewModel.Vehicles = vehicles;
             vehiclesPaginationViewModel.TotalSize = await _service.CountVehicles();

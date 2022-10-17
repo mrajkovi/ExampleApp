@@ -3,27 +3,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ExampleApp.MVC.ViewModels;
 
-public class VehiclesPaginationViewModel
+public class VehiclesModelsPaginationViewModel
 {
-    public string Id { get; set; } = null!;
+    public int Id { get; set; }
     [Required]
     public string Name { get; set; } = null!;
     [Required]
     [Display(Name="Abbreviation")]
     public string Abbrv { get; set; } = null!;
-    public List<VehicleMake> Vehicles { get; set; } = null!;
+    [Required]
+    public int MakeId {get; set; }
+    public List<VehicleModel> Models { get; set; } = null!;
     public int TotalSize { get; set; }
     public int PageSize { get; set; }
     public int PageNumber { get; set; }
     public string SortOrder { get; set; } = null!;
     public string FilterString { get; set;} = null!;
-}
-
-public class VehicleViewModel
-{
-    [Required]
-    public string Name { get; set; } = null!;
-    [Required]
-    [Display(Name="Abbreviation")]
-    public string Abbrv { get; set; } = null!;
 }
