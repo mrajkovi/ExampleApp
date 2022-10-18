@@ -36,6 +36,10 @@
                 <option selected="@(Model.PageSize==10)" value="10">10</option>
                 <option selected="@(Model.PageSize==15)" value="15">15</option>
             </select>
+            <div class="form-check mt-3">
+                <input type="checkbox" name="searchByNumber" id="searchByNumber" class="form-check-input" value="true" @(Model.SearchByNumber ? "checked=\"checked\"" : "")></input>
+                <label for="searchByNumber" class="form-check-label">Search by number</label>
+            </div>
             <select name="sortOrder" id="sortOrder" class="w-50 mt-2 form-select form-select-sm">
                 <option selected='' value="">Choose sort option</option>
                 <option selected='@(Model.SortOrder=="name_asc")' value="name_asc">Name ascending</option>
@@ -98,7 +102,8 @@
                 asp-route-pageNumber="@(Model.PageNumber-1)"
                 asp-route-pageSize ="@(Model.PageSize)"
                 asp-route-searchString="@(Model.FilterString)"
-                asp-route-sortOrder="@(Model.SortOrder)">
+                asp-route-sortOrder="@(Model.SortOrder)"
+                asp-route-searchByNumber="@(Model.SearchByNumber)">
                     Previous
             </a>
         </li>
@@ -111,7 +116,8 @@
                 asp-route-searchString="@(Model.FilterString)" 
                 asp-route-pageSize ="@(Model.PageSize)"
                 asp-route-pageNumber="@(Model.PageNumber+1)"
-                asp-route-sortOrder="@(Model.SortOrder)">
+                asp-route-sortOrder="@(Model.SortOrder)"
+                asp-route-searchByNumber="@(Model.SearchByNumber)">
                     Next
             </a>
         </li>

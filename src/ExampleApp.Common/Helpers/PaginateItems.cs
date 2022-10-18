@@ -20,7 +20,7 @@ public class PaginateItems<T>
             PageSize = 5;
         }
     }
-    public async Task<IQueryable<T>> paginate(IQueryable<T> source)
+    public async Task<IQueryable<T>> Paginate(IQueryable<T> source)
     {
         TotalSize = await source.CountAsync();
         var items = source.Skip((PageNumber - 1) * PageSize).Take(PageSize);

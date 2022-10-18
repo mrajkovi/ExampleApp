@@ -2,55 +2,109 @@ using ExampleApp.DAL;
 
 namespace ExampleApp.Common;
 
-public class FilterItems<T> where T : IVehicleBaseEntity
+public class FilterItems
 {
     public string FilterString { get; private set; }
-    public FilterItems(string? filter) 
+    private string FilterBy { get; set; }
+    private bool FilterExactly { get; set; }
+    public FilterItems(string? filter, string filterBy, bool filterExactly = false) 
     {
         if (!string.IsNullOrEmpty(filter))
         {
-            FilterString = filter;
+            FilterString = filter.ToLower();
         } 
         else 
         {
             FilterString = "";
         }
-    }
-    public IQueryable<VehicleMakeEntity> filter(IQueryable<VehicleMakeEntity> items)
-    {
-        if (FilterString != "")
+
+        switch (filterBy)
         {
-            return items.Where(v => v.Name.Contains(FilterString) || v.Abbrv.Contains(FilterString));
+            case "name":
+                FilterBy = "name";
+                break;
+            case "name_abbrv":
+                FilterBy = "name_abbrv";
+                break;
+            case "abbrv":
+                FilterBy = "abbrv";
+                break;
+            case "makeId":
+                FilterBy = "makeId";
+                break;
+            default:
+                FilterBy = "id";
+                break;
         }
-        else 
-        {
-            return items;
-        }
+
+        FilterExactly = filterExactly; 
     }
-    public IQueryable<VehicleModelEntity> filter(IQueryable<VehicleModelEntity> items)
+    private IQueryable<IVehicleBaseEntity> FindCommon(IQueryable<IVehicleBaseEntity> items)
     {
-        if (FilterString != "")
+        if (!string.IsNullOrWhiteSpace(FilterString))
         {
-            if (Int32.TryParse(FilterString, out int result))
+            if (!FilterExactly)
             {
-                items = items.Where(m => m.MakeId == result);
-            } 
-            else 
-            {
-                items = items.Where(m => m.Name.Contains(FilterString) || m.Abbrv.Contains(FilterString));
+                switch (FilterBy)
+                {
+                    case "name":
+                        items = items.Where(v => v.Name.ToLower().Contains(FilterString));
+                        break;
+                    case "abbrv":
+                        items = items.Where(v => v.Name.ToLower().Contains(FilterString));
+                        break;
+                    case "name_abbrv":
+                        items = items.Where(v => v.Name.ToLower().Contains(FilterString) || v.Abbrv.ToLower().Contains(FilterString));
+                        break;
+                    case "id":
+                        if (Int32.TryParse(FilterString, out int id))
+                        {
+                            items = items.Where(v => v.Id == id);
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
-            return items;
+            else
+            {
+                switch (FilterBy)
+                {
+                    case "name":
+                        items = items.Where(v => v.Name.ToLower().Equals(FilterString));
+                        break;
+                    case "abbrv":
+                        items = items.Where(v => v.Abbrv.ToLower().Equals(FilterString));
+                        break;
+                    case "name_abbrv":
+                        items = items.Where(v => v.Name.ToLower().Equals(FilterString) || v.Abbrv.ToLower().Equals(FilterString));
+                        break;
+                    case "id":
+                        if (Int32.TryParse(FilterString, out int id))
+                        {
+                            items = items.Where(v => v.Id == id);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
-        else 
-        {
-            return items;
-        }
+        return items;
     }
-    public IQueryable<T> filterByName(IQueryable<T> items)
+    public IQueryable<VehicleMakeEntity> FindVehicles(IQueryable<VehicleMakeEntity> items)
     {
-        if (FilterString != "")
+        return FindCommon(items).OfType<VehicleMakeEntity>();
+    }
+    public IQueryable<VehicleModelEntity> FindModels(IQueryable<VehicleModelEntity> items)
+    {
+        if (FilterBy.Equals("makeId") && Int32.TryParse(FilterString, out int makeId))
         {
-            return items.Where(v => v.Name.Equals(FilterString));
+            items = items.Where(m => m.MakeId == makeId);
+        }
+        else
+        {
+            items = FindCommon(items).OfType<VehicleModelEntity>();
         }
         return items;
     }

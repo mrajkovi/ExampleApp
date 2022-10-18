@@ -28,10 +28,19 @@ public class VehicleModelController : Controller
         try
         {
             var sortItems = new SortItems<VehicleModelEntity>(queryDataSFP.SortOrder);
-            var filterItems = new FilterItems<VehicleModelEntity>(queryDataSFP.SearchString);
+            FilterItems filterModels;
+            Console.WriteLine(queryDataSFP.SearchByNumber);
+            if (queryDataSFP.SearchByNumber)
+            {
+                filterModels = new FilterItems(queryDataSFP.SearchString, "makeId");
+            }
+            else
+            {
+                filterModels = new FilterItems(queryDataSFP.SearchString, "name_abbrv");
+            }
             var paginateItems = new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
 
-            List<VehicleModel> models = await _service.GetVehiclesModels(sortItems, filterItems, paginateItems);
+            List<VehicleModel> models = await _service.GetVehiclesModels(sortItems, filterModels, paginateItems);
 
             VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel = _mapper.Map<VehiclesModelsPaginationViewModel>(queryDataSFP);
             vehiclesModelsPaginationViewModel.Models = models;
@@ -51,7 +60,8 @@ public class VehicleModelController : Controller
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            VehicleModel? vehicle = await _service.GetVehicleModelById(id);
+            var filterModelsById = new FilterItems(id.ToString(), "id");
+            VehicleModel? vehicle = await _service.GetVehicleModel(filterModelsById);
             if (vehicle == null) 
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
@@ -96,7 +106,8 @@ public class VehicleModelController : Controller
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            VehicleModel? vehicle = await _service.GetVehicleModelById(id);
+            var filterModelsById = new FilterItems(id.ToString(), "id");
+            VehicleModel? vehicle = await _service.GetVehicleModel(filterModelsById);
             if (vehicle == null)
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
@@ -117,9 +128,10 @@ public class VehicleModelController : Controller
         _logger.LogInformation(EventID.UpdateItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
+            var filterModelsById = new FilterItems(id.ToString(), "id");
             VehicleModel model = new VehicleModel();
             model = _mapper.Map<VehicleModel>(vehicleModelsViewModel);
-            bool succeeded = await _service.UpdateVehicleModel(id, model);
+            bool succeeded = await _service.UpdateVehicleModel(filterModelsById, model);
             if (succeeded)
             {
                 return RedirectToAction(nameof(UpdateView), new { id = id });
@@ -142,7 +154,8 @@ public class VehicleModelController : Controller
         _logger.LogInformation(EventID.DeleteItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            bool succeeded = await _service.DeleteVehicleModel(id);
+            var filterModelsById = new FilterItems(id.ToString(), "id");
+            bool succeeded = await _service.DeleteVehicleModel(filterModelsById);
             if (succeeded) 
             {
                 return RedirectToAction(nameof(ModelsIndex));

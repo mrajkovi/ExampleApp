@@ -20,33 +20,25 @@ public class VehicleModelRepository : IVehicleModelRepository
     {
         return await _context.VehicleModel.CountAsync();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems<VehicleModelEntity> filterItems, PaginateItems<VehicleModelEntity> paginateItems)
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterModels, PaginateItems<VehicleModelEntity> paginateItems)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = sortItems.sort(models);
-        models = filterItems.filter(models);
-        models = await paginateItems.paginate(models);
+        models = sortItems.Sort(models);
+        models = filterModels.FindModels(models);
+        models = await paginateItems.Paginate(models);
         
         return _mapper.Map<List<VehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
     } 
-    public async Task<VehicleModel?> GetVehicleModelByFilter(FilterItems<VehicleModelEntity> filterItems)
+    public async Task<VehicleModel?> GetVehicleModel(FilterItems filterModels)
     {
         var models = _context.VehicleModel.AsQueryable().AsNoTracking();
-        models = filterItems.filterByName(models);
+        models = filterModels.FindModels(models);
         return _mapper.Map<VehicleModel>(await models.FirstOrDefaultAsync());
     }
-    public async Task<VehicleModel?> GetVehicleModelById(int id)
-    {
-        return _mapper.Map<VehicleModel>(await _context.VehicleModel.FindAsync(id));
-    }
-    public async Task<bool> CheckVehicleModelById(int id)
-    {
-        return await _context.VehicleModel.AnyAsync(v => v.Id.Equals(id));
-    }
-    public async Task<bool> CheckVehicleModelByFilter(FilterItems<VehicleModelEntity> filterItems)
+    public async Task<bool> CheckVehicleModel(FilterItems filterItems)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = filterItems.filterByName(models);
+        models = filterItems.FindModels(models);
         return await models.AnyAsync();
     }
     public async Task CreateVehicleModel(VehicleModel vehicleModel) 

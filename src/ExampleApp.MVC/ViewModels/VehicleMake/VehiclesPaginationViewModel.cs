@@ -17,4 +17,5 @@ public class VehiclesPaginationViewModel
     public int PageNumber { get; set; }
     public string SortOrder { get; set; } = null!;
     public string FilterString { get; set;} = null!;
+    public bool SearchByNumber { get; set; }
 }

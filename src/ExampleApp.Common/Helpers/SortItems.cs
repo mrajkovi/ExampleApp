@@ -16,7 +16,7 @@ public class SortItems<T> where T : IVehicleBaseEntity
             SortOrder = "";
         }
     }
-    public IQueryable<T> sort(IQueryable<T> items)
+    public IQueryable<T> Sort(IQueryable<T> items)
     { 
         switch (SortOrder)
         {   

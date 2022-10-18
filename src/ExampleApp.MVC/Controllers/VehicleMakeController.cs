@@ -28,10 +28,17 @@ public class VehicleMakeController : Controller
         try 
         {
             var sortItems = new SortItems<VehicleMakeEntity>(queryDataSFP.SortOrder);
-            var filterItems = new FilterItems<VehicleMakeEntity>(queryDataSFP.SearchString);
+            FilterItems filterVehicles;
+            if (queryDataSFP.SearchByNumber)
+            {
+                filterVehicles = new FilterItems(queryDataSFP.SearchString, "id");
+            }
+            else
+            {
+                filterVehicles = new FilterItems(queryDataSFP.SearchString, "name_abbrv");
+            }
             var paginateItems = new PaginateItems<VehicleMakeEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
-
-            List<VehicleMake> vehicles = await _service.GetVehicles(sortItems, filterItems, paginateItems);
+            List<VehicleMake> vehicles = await _service.GetVehicles(sortItems, filterVehicles, paginateItems);
             VehiclesPaginationViewModel vehiclesPaginationViewModel = _mapper.Map<VehiclesPaginationViewModel>(queryDataSFP);
             vehiclesPaginationViewModel.Vehicles = vehicles;
             vehiclesPaginationViewModel.TotalSize = await _service.CountVehicles();
@@ -50,7 +57,8 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            VehicleMake? vehicle = await _service.GetVehicleById(id);
+            var filterVehiclebyId = new FilterItems(id.ToString(), "id");
+            VehicleMake? vehicle = await _service.GetVehicle(filterVehiclebyId);
             if (vehicle == null) 
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
@@ -70,8 +78,8 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try 
         {
-            FilterItems<VehicleMakeEntity> filterItems = new FilterItems<VehicleMakeEntity>(name);
-            VehicleMake? vehicle = await _service.GetVehicleByFilter(filterItems);
+            FilterItems filterVehiclesByNameOrAbbrv = new FilterItems(name, "name_abbrv");
+            VehicleMake? vehicle = await _service.GetVehicle(filterVehiclesByNameOrAbbrv);
             if (vehicle == null) 
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
@@ -114,8 +122,9 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.UpdateItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try 
         {
+            var filterVehiclesById = new FilterItems(id.ToString(), "id");
             VehicleMake newVehicle = _mapper.Map<VehicleMake>(vehicleViewModel);
-            bool succeeded = await _service.UpdateVehicle(id, newVehicle);
+            bool succeeded = await _service.UpdateVehicle(filterVehiclesById, newVehicle);
             if (succeeded) 
             {
                 return RedirectToAction(nameof(UpdateView), new { id = id });
@@ -138,7 +147,8 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            VehicleMake? existingVehicle = await _service.GetVehicleById(id);
+            var filterVehiclesById = new FilterItems(id.ToString(), "id");
+            VehicleMake? existingVehicle = await _service.GetVehicle(filterVehiclesById);
             if (existingVehicle == null)
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
@@ -159,7 +169,8 @@ public class VehicleMakeController : Controller
         _logger.LogInformation(EventID.DeleteItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            bool succeeded = await _service.DeleteVehicle(id);
+            var filterVehiclesById = new FilterItems(id.ToString(), "id");
+            bool succeeded = await _service.DeleteVehicle(filterVehiclesById);
             if (succeeded) 
             {
                 return RedirectToAction(nameof(VehiclesIndex));

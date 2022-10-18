@@ -17,22 +17,18 @@ public class VehicleMakeService : IVehicleMakeService
     {
         return await _repository.CountVehicles();
     }
-    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems<VehicleMakeEntity> filterItems, PaginateItems<VehicleMakeEntity> paginateItems) 
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterVehicles, PaginateItems<VehicleMakeEntity> paginateItems) 
     {
-        return await _repository.GetVehicles(sortItems, filterItems, paginateItems);
+        return await _repository.GetVehicles(sortItems, filterVehicles, paginateItems);
     }
-    public async Task<VehicleMake?> GetVehicleById(int id)
+    public async Task<VehicleMake?> GetVehicle(FilterItems filterVehicles)
     {
-        return await _repository.GetVehicleById(id);
-    }
-    public async Task<VehicleMake?> GetVehicleByFilter(FilterItems<VehicleMakeEntity> filterItems)
-    {
-        return await _repository.GetVehicleByFilter(filterItems);
+        return await _repository.GetVehicle(filterVehicles);
     }
     public async Task<bool> CreateVehicle(VehicleMake newVehicle) 
     {        
-        var filterItems = new FilterItems<VehicleMakeEntity>(newVehicle.Name);
-        if (await _repository.CheckVehicleByFilter(filterItems)) 
+        var filterVehiclesByName = new FilterItems(newVehicle.Name, "name");
+        if (await _repository.CheckVehicle(filterVehiclesByName)) 
         {
             return false;
         }
@@ -40,37 +36,38 @@ public class VehicleMakeService : IVehicleMakeService
         await _repository.CreateVehicle(newVehicle);
         return true;
     }
-    public async Task<bool> UpdateVehicle(int id, VehicleMake newVehicle)
+    public async Task<bool> UpdateVehicle(FilterItems filterVehiclesById, VehicleMake newVehicle)
     {
-        if (!await _repository.CheckVehicleById(id)) 
+        var newVehicleId = Int32.Parse(filterVehiclesById.FilterString);
+        if (!await _repository.CheckVehicle(filterVehiclesById)) 
         {
             return false;
         }
 
-        var filterItems = new FilterItems<VehicleMakeEntity>(newVehicle.Name);
+        var filterVehiclesByName = new FilterItems(newVehicle.Name, "name", true);
 
-        if (await _repository.CheckVehicleByFilter(filterItems))
+        if (await _repository.CheckVehicle(filterVehiclesByName))
         {
-            VehicleMake? oldVehicle = await _repository.GetVehicleByFilter(filterItems);
-            if (oldVehicle?.Id != id)
+            VehicleMake? oldVehicle = await _repository.GetVehicle(filterVehiclesById);
+            if (oldVehicle?.Id != newVehicleId)
             {
                 return false;
             }
             
         } 
-        newVehicle.Id = id;
+        newVehicle.Id = newVehicleId;
         await _repository.UpdateVehicle(newVehicle);
         return true;
     }
-    public async Task<bool> DeleteVehicle(int id)
+    public async Task<bool> DeleteVehicle(FilterItems filterVehicles)
     {     
-        if (!await _repository.CheckVehicleById(id)) 
+        if (!await _repository.CheckVehicle(filterVehicles)) 
         {
             return false;
         }
 
         VehicleMake vehicle = new VehicleMake();
-        vehicle.Id = id;
+        vehicle.Id = Int32.Parse(filterVehicles.FilterString);
     
         await _repository.DeleteVehicle(vehicle);
         return true;
