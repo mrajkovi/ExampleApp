@@ -1,6 +1,6 @@
 namespace ExampleApp.Common;
 
-public class QueryDataSFP 
+public class QueryDataManipulation
 {
     public string? SortOrder { get; set; }
     public string? SearchString { get; set; }

@@ -1,0 +1,44 @@
+@using ExampleApp.MVC.ViewModels;
+
+@model VehiclesViewModel;
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">@Html.DisplayNameFor(model => model.VehicleViewModel.Id)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.VehicleViewModel.Name)</th>
+            <th scope="col">@Html.DisplayNameFor(model => model.VehicleViewModel.Abbrv)</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var v in Model.Vehicles)
+    {
+        <tr>
+            <th>
+                @v.Id
+            </th>
+            <td>
+                @v.Name
+            </td>
+            <td>
+                @v.Abbrv
+                <div class="forms-wrapper">
+                    <div class="form">
+                        <form asp-action="DeleteVehicle" asp-route-id="@v.Id">
+                            <label for="@v.Id">Delete</label>
+                            <input type="submit" id="@v.Id"/>
+                        </form>
+                    </div>
+                    <div class="form">
+                        <a asp-action="UpdateView" asp-route-id="@v.Id" style="text-decoration: none">Edit</a>
+                    <!--<form asp-action="UpdateView" asp-route-id="@v.Id" method="get">
+                            <label for="@v.Id">Edit</label>
+                            <input type="submit" id="@v.Id"/>
+                        </form>-->
+                    </div>
+                </div>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

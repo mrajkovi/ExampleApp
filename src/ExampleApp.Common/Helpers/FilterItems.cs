@@ -20,17 +20,11 @@ public class FilterItems
 
         switch (filterBy)
         {
-            case "name":
-                FilterBy = "name";
-                break;
+            case "name" :
             case "name_abbrv":
-                FilterBy = "name_abbrv";
-                break;
             case "abbrv":
-                FilterBy = "abbrv";
-                break;
             case "makeId":
-                FilterBy = "makeId";
+                FilterBy = filterBy;
                 break;
             default:
                 FilterBy = "id";
@@ -51,7 +45,7 @@ public class FilterItems
                         items = items.Where(v => v.Name.ToLower().Contains(FilterString));
                         break;
                     case "abbrv":
-                        items = items.Where(v => v.Name.ToLower().Contains(FilterString));
+                        items = items.Where(v => v.Abbrv.ToLower().Contains(FilterString));
                         break;
                     case "name_abbrv":
                         items = items.Where(v => v.Name.ToLower().Contains(FilterString) || v.Abbrv.ToLower().Contains(FilterString));

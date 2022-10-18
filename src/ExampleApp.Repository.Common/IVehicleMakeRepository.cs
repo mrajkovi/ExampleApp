@@ -6,7 +6,7 @@ namespace ExampleApp.Repository.Common;
 
 public interface IVehicleMakeRepository 
 {
-    public Task<int> CountVehicles();
+    public Task<int> CountVehicles(FilterItems filterVehicles);
     public Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems);
     public Task<VehicleMake?> GetVehicle(FilterItems filterItems);
     public Task<bool> CheckVehicle(FilterItems filterItems);

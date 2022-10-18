@@ -13,9 +13,9 @@ public class VehicleMakeService : IVehicleMakeService
     {
         _repository = repository;
     }
-    public async Task<int> CountVehicles()
+    public async Task<int> CountVehicles(FilterItems filterVehicles)
     {
-        return await _repository.CountVehicles();
+        return await _repository.CountVehicles(filterVehicles);
     }
     public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterVehicles, PaginateItems<VehicleMakeEntity> paginateItems) 
     {
@@ -28,6 +28,7 @@ public class VehicleMakeService : IVehicleMakeService
     public async Task<bool> CreateVehicle(VehicleMake newVehicle) 
     {        
         var filterVehiclesByName = new FilterItems(newVehicle.Name, "name");
+
         if (await _repository.CheckVehicle(filterVehiclesByName)) 
         {
             return false;
@@ -38,7 +39,6 @@ public class VehicleMakeService : IVehicleMakeService
     }
     public async Task<bool> UpdateVehicle(FilterItems filterVehiclesById, VehicleMake newVehicle)
     {
-        var newVehicleId = Int32.Parse(filterVehiclesById.FilterString);
         if (!await _repository.CheckVehicle(filterVehiclesById)) 
         {
             return false;
@@ -46,9 +46,12 @@ public class VehicleMakeService : IVehicleMakeService
 
         var filterVehiclesByName = new FilterItems(newVehicle.Name, "name", true);
 
+        var newVehicleId = Int32.Parse(filterVehiclesById.FilterString);
+
         if (await _repository.CheckVehicle(filterVehiclesByName))
         {
             VehicleMake? oldVehicle = await _repository.GetVehicle(filterVehiclesById);
+            
             if (oldVehicle?.Id != newVehicleId)
             {
                 return false;
@@ -56,20 +59,23 @@ public class VehicleMakeService : IVehicleMakeService
             
         } 
         newVehicle.Id = newVehicleId;
+
         await _repository.UpdateVehicle(newVehicle);
+
         return true;
     }
-    public async Task<bool> DeleteVehicle(FilterItems filterVehicles)
+    public async Task<bool> DeleteVehicle(FilterItems filterVehiclesById)
     {     
-        if (!await _repository.CheckVehicle(filterVehicles)) 
+        if (!await _repository.CheckVehicle(filterVehiclesById)) 
         {
             return false;
         }
 
         VehicleMake vehicle = new VehicleMake();
-        vehicle.Id = Int32.Parse(filterVehicles.FilterString);
+        vehicle.Id = Int32.Parse(filterVehiclesById.FilterString);
     
         await _repository.DeleteVehicle(vehicle);
+
         return true;
     }
 }

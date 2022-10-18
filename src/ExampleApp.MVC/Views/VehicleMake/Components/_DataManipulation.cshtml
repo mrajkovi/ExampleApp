@@ -1,0 +1,25 @@
+@using ExampleApp.MVC.ViewModels;
+
+@model DataManipulationViewModel;
+
+<div>
+    <form asp-action="VehiclesView" method="get" class="mt-3">
+        <label for="searchString" class="form-label">Search:</label>
+        <input type="text" name="searchString" id="searchString" placeholder="Name or abbreviation" class="w-75 form-control"/>
+        <label for="pageSize" class="mt-3">Choose size of page:</label>
+        <select name="pageSize" id="pageSize" class="w-75 mt-2 form-select form-select-sm">
+            <option selected="@(Model.PageSize==5)" value="5">5</option>
+            <option selected="@(Model.PageSize==10)" value="10">10</option>
+            <option selected="@(Model.PageSize==15)" value="15">15</option>
+        </select>
+        <select name="sortOrder" id="sortOrder" class="w-75 mt-2 form-select form-select-sm">
+            <option selected='' value="">Choose sort option</option>
+            <option selected='@(Model.SortOrder=="name_asc")' value="name_asc">Name ascending</option>
+            <option selected='@(Model.SortOrder=="name_desc")' value="name_desc">Name descending</option>
+            <option selected='@(Model.SortOrder=="abbrv_asc")' value="abbrv_asc">Abbreviation ascending</option>
+            <option selected='@(Model.SortOrder=="abbrv_desc")' value="abbrv_desc">Abbreviation descending</option>
+        </select>
+        <input type="text" name="pageNumber" style="display:none" value="1">
+        <button type="submit" class="btn btn-primary mt-3">Search</button>  
+    </form>
+</div>

@@ -1,0 +1,22 @@
+@using ExampleApp.MVC.ViewModels;
+
+@model VehiclesModelsViewModel
+
+<div>
+    <form asp-action="CreateVehicleModel">
+        <div asp-validation-summary="All" class="text-danger"></div>
+        <div class="w-50 mb-3">
+                <label asp-for="@Model.VehicleModelViewModel.Name" class="form-label"></label>
+                <input asp-for="@Model.VehicleModelViewModel.Name" class="form-control">
+        </div>
+        <div class="w-50 mb-3">
+            <label asp-for="@Model.VehicleModelViewModel.MakeId" class="form-label"></label>
+            <input asp-for="@Model.VehicleModelViewModel.MakeId" class="form-control">
+        </div>
+        <div class="w-50 mb-3">
+            <label asp-for="@Model.VehicleModelViewModel.Abbrv" class="form-label"></label>
+            <input asp-for="@Model.VehicleModelViewModel.Abbrv" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>

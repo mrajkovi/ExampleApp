@@ -22,67 +22,80 @@ public class VehicleModelController : Controller
         _logger = logger;
     }
     [HttpGet]
-    public async Task<IActionResult> ModelsIndex(QueryDataSFP queryDataSFP)
+    public async Task<IActionResult> ModelsIndex(QueryDataManipulation queryDataManipulation)
     {
         _logger.LogInformation(EventID.GetItems, ControllerContext.HttpContext.GetEndpoint()?.ToString());
+        
         try
         {
-            var sortItems = new SortItems<VehicleModelEntity>(queryDataSFP.SortOrder);
+            var sortItems = new SortItems<VehicleModelEntity>(queryDataManipulation.SortOrder);
             FilterItems filterModels;
-            Console.WriteLine(queryDataSFP.SearchByNumber);
-            if (queryDataSFP.SearchByNumber)
+            
+            if (queryDataManipulation.SearchByNumber)
             {
-                filterModels = new FilterItems(queryDataSFP.SearchString, "makeId");
+                filterModels = new FilterItems(queryDataManipulation.SearchString, "makeId");
             }
             else
             {
-                filterModels = new FilterItems(queryDataSFP.SearchString, "name_abbrv");
+                filterModels = new FilterItems(queryDataManipulation.SearchString, "name_abbrv");
             }
-            var paginateItems = new PaginateItems<VehicleModelEntity>(queryDataSFP.PageNumber, queryDataSFP.PageSize);
+
+            var paginateItems = new PaginateItems<VehicleModelEntity>(queryDataManipulation.PageNumber, queryDataManipulation.PageSize);
 
             List<VehicleModel> models = await _service.GetVehiclesModels(sortItems, filterModels, paginateItems);
 
-            VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel = _mapper.Map<VehiclesModelsPaginationViewModel>(queryDataSFP);
-            vehiclesModelsPaginationViewModel.Models = models;
-            vehiclesModelsPaginationViewModel.TotalSize = await _service.CountVehiclesModels();
+            DataManipulationViewModel dataManipulationViewModel = _mapper.Map<DataManipulationViewModel>(queryDataManipulation);
+            dataManipulationViewModel.TotalSize = await _service.CountVehiclesModels(filterModels);
+            VehiclesModelsViewModel vehiclesModelsViewModel = new VehiclesModelsViewModel();
+            vehiclesModelsViewModel.Models = _mapper.Map<List<VehicleModelViewModel>>(models);
+            VehiclesModelsIndexViewModel vehiclesModelsIndexViewModel = new VehiclesModelsIndexViewModel(vehiclesModelsViewModel, dataManipulationViewModel);
 
-            return View("Index", vehiclesModelsPaginationViewModel);
+            return View("Index", vehiclesModelsIndexViewModel);
         }
         catch(Exception exception)
         {
             _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            
             return View("Error");
         }
     }
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetVehicleModel(int id)
     {
         _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
+        
         try
         {
             var filterModelsById = new FilterItems(id.ToString(), "id");
-            VehicleModel? vehicle = await _service.GetVehicleModel(filterModelsById);
-            if (vehicle == null) 
+            
+            VehicleModel? vehicleModel = await _service.GetVehicleModel(filterModelsById);
+            
+            if (vehicleModel == null) 
             {
                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
+                
                 return NotFound();
             }
-            return Ok(vehicle);
+            
+            return Ok(vehicleModel);
         }
         catch(Exception exception)
         {
             _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
     [HttpPost]
-    public async Task<IActionResult> CreateVehicleModel(VehiclesModelsPaginationViewModel vehiclesModelsPaginationViewModel)
+    public async Task<IActionResult> CreateVehicleModel(VehicleModelViewModel vehicleModelViewModel)
     {
         _logger.LogInformation(EventID.InsertItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
+        
         try
         {
-            VehicleModel model = _mapper.Map<VehicleModel>(vehiclesModelsPaginationViewModel);
-            bool succeeded = await _service.CreateVehicleModel(model);
+            VehicleModel vehicleModel = _mapper.Map<VehicleModel>(vehicleModelViewModel);
+            
+            bool succeeded = await _service.CreateVehicleModel(vehicleModel);
 
             if (succeeded) 
             {
@@ -91,47 +104,30 @@ public class VehicleModelController : Controller
             else 
             {
                 _logger.LogWarning(EventID.BadRequest, "Bad request");
+                
                 return View("Error");
             }
         }
         catch(Exception exception)
         {
             _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            
             return View("Error");
         }
     }
-    [HttpGet("update/{id}")]
-    public async Task<IActionResult> UpdateView(int id)
-    {
-        _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
-        try
-        {
-            var filterModelsById = new FilterItems(id.ToString(), "id");
-            VehicleModel? vehicle = await _service.GetVehicleModel(filterModelsById);
-            if (vehicle == null)
-            {
-                _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
-                return RedirectToAction(nameof(ModelsIndex));
-            }
-            VehicleModelViewModel vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicle);
-            return View("Update", vehicleModelViewModel);
-        }
-        catch(Exception exception)
-        {
-            _logger.LogError(EventID.InternalError, exception, "Exception occurred");
-            return View("Error");
-        }
-    }
-    [HttpPost("update/{id}")]
+    [HttpPost("update/{id:int}")]
     public async Task<IActionResult> UpdateVehicleModel(int id, VehicleModelViewModel vehicleModelsViewModel)
     {
         _logger.LogInformation(EventID.UpdateItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
+        
         try
         {
             var filterModelsById = new FilterItems(id.ToString(), "id");
-            VehicleModel model = new VehicleModel();
-            model = _mapper.Map<VehicleModel>(vehicleModelsViewModel);
-            bool succeeded = await _service.UpdateVehicleModel(filterModelsById, model);
+            VehicleModel vehicleModel = new VehicleModel();
+            vehicleModel = _mapper.Map<VehicleModel>(vehicleModelsViewModel);
+            
+            bool succeeded = await _service.UpdateVehicleModel(filterModelsById, vehicleModel);
+            
             if (succeeded)
             {
                 return RedirectToAction(nameof(UpdateView), new { id = id });
@@ -139,16 +135,44 @@ public class VehicleModelController : Controller
             else 
             {
                 _logger.LogWarning(EventID.BadRequest, "Bad request");
+                
                 return View("Error");
             }
         }
         catch(Exception exception)
         {
-             _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            
             return View("Error");
         }
     }
-    [HttpPost("delete/{id}")]
+    [HttpGet("update/{id:int}")]
+    public async Task<IActionResult> UpdateView(int id)
+    {
+        _logger.LogInformation(EventID.GetItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
+        
+        try
+        {
+            var filterModelsById = new FilterItems(id.ToString(), "id");
+            VehicleModel? vehicleModel = await _service.GetVehicleModel(filterModelsById);
+            
+            if (vehicleModel == null)
+            {
+                _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
+                
+                return RedirectToAction(nameof(ModelsIndex));
+            }
+            VehicleModelViewModel vehicleModelViewModel = _mapper.Map<VehicleModelViewModel>(vehicleModel);
+            return View("Update", vehicleModelViewModel);
+        }
+        catch(Exception exception)
+        {
+            _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            
+            return View("Error");
+        }
+    }
+    [HttpPost("delete/{id:int}")]
     public async Task<IActionResult> DeleteVehicleModel(int id)
     {
         _logger.LogInformation(EventID.DeleteItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
@@ -156,19 +180,22 @@ public class VehicleModelController : Controller
         {
             var filterModelsById = new FilterItems(id.ToString(), "id");
             bool succeeded = await _service.DeleteVehicleModel(filterModelsById);
+            
             if (succeeded) 
             {
                 return RedirectToAction(nameof(ModelsIndex));
             } 
             else 
             {
-                 _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
+                _logger.LogWarning(EventID.GetItemNotFound, "Item not found");
+                
                 return View("Error");
             }
         } 
         catch(Exception exception)
         {
-             _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            _logger.LogError(EventID.InternalError, exception, "Exception occurred");
+            
             return View("Error");
         }
     }

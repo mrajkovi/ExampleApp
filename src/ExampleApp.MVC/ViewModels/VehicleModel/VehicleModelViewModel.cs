@@ -4,6 +4,7 @@ namespace ExampleApp.MVC.ViewModels;
 
 public class VehicleModelViewModel
 {
+    public int Id { get; set; }
     [Required]
     public string Name { get; set; } = null!;
     [Required]

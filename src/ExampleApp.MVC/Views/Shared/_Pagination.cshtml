@@ -1,0 +1,38 @@
+@using ExampleApp.MVC.ViewModels;
+
+@model DataManipulationViewModel;
+
+@{
+    var prevDisabled = @Model.PageNumber == 1 ? "disabled" : "";
+    var nextDisabled = @Model.TotalSize <= @Model.PageSize * @Model.PageNumber ? "disabled" : "";
+}
+
+<nav>
+    <ul class="pagination justify-content-center">
+        <li class="page-item @prevDisabled">
+            <a 
+                class="page-link" 
+                asp-route-pageNumber="@(Model.PageNumber-1)"
+                asp-route-pageSize ="@(Model.PageSize)"
+                asp-route-searchString="@(Model.SearchString)"
+                asp-route-sortOrder="@(Model.SortOrder)"
+                asp-route-searchByNumber="@(Model.SearchByNumber)">
+                    Previous
+            </a>
+        </li>
+        <li class="page-item active">
+            <span class="page-link">@(Model.PageNumber)</span>
+        </li>
+        <li class="page-item @nextDisabled">
+            <a 
+                class="page-link" 
+                asp-route-searchString="@(Model.SearchString)" 
+                asp-route-pageSize ="@(Model.PageSize)"
+                asp-route-pageNumber="@(Model.PageNumber+1)"
+                asp-route-sortOrder="@(Model.SortOrder)"
+                asp-route-searchByNumber="@(Model.SearchByNumber)">
+                    Next
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -16,29 +16,33 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         _mapper = mapper;
     }
 
-    public async Task<int> CountVehicles()
+    public async Task<int> CountVehicles(FilterItems filterVehicles)
     {
-        return await _context.VehicleMake.CountAsync();
+        var vehicles = _context.VehicleMake.AsQueryable();
+        vehicles = filterVehicles.FindVehicles(vehicles);
+        return await vehicles.CountAsync();
     }
-    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterVehicles, PaginateItems<VehicleMakeEntity> paginateItems)
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
         vehicles = sortItems.Sort(vehicles);
-        vehicles = filterVehicles.FindVehicles(vehicles);
+        vehicles = filterItems.FindVehicles(vehicles);
         vehicles = await paginateItems.Paginate(vehicles);
         
         return _mapper.Map<List<VehicleMake>>(await vehicles.ToListAsync());
     }
-    public async Task<bool> CheckVehicle(FilterItems filterVehicles)
+    public async Task<bool> CheckVehicle(FilterItems filterItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = filterVehicles.FindVehicles(vehicles);
+        vehicles = filterItems.FindVehicles(vehicles);
+        
         return await vehicles.AnyAsync();
     }
-    public async Task<VehicleMake?> GetVehicle(FilterItems filterVehicles)
+    public async Task<VehicleMake?> GetVehicle(FilterItems filterItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable().AsNoTracking();
-        vehicles = filterVehicles.FindVehicles(vehicles);
+        vehicles = filterItems.FindVehicles(vehicles);
+        
         return _mapper.Map<VehicleMake>(await vehicles.FirstOrDefaultAsync());
     }
     public async Task CreateVehicle(VehicleMake vehicle) 

@@ -16,29 +16,33 @@ public class VehicleModelRepository : IVehicleModelRepository
         _context = context;
         _mapper = mapper;
     }
-    public async Task<int> CountVehiclesModels()
+    public async Task<int> CountVehiclesModels(FilterItems filterModels)
     {
-        return await _context.VehicleModel.CountAsync();
+        var models = _context.VehicleModel.AsQueryable();
+        models = filterModels.FindModels(models);
+        return await models.CountAsync();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterModels, PaginateItems<VehicleModelEntity> paginateItems)
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleModelEntity> paginateItems)
     {
         var models = _context.VehicleModel.AsQueryable();
         models = sortItems.Sort(models);
-        models = filterModels.FindModels(models);
+        models = filterItems.FindModels(models);
         models = await paginateItems.Paginate(models);
         
         return _mapper.Map<List<VehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
     } 
-    public async Task<VehicleModel?> GetVehicleModel(FilterItems filterModels)
+    public async Task<VehicleModel?> GetVehicleModel(FilterItems filterItems)
     {
         var models = _context.VehicleModel.AsQueryable().AsNoTracking();
-        models = filterModels.FindModels(models);
+        models = filterItems.FindModels(models);
+        
         return _mapper.Map<VehicleModel>(await models.FirstOrDefaultAsync());
     }
     public async Task<bool> CheckVehicleModel(FilterItems filterItems)
     {
         var models = _context.VehicleModel.AsQueryable();
         models = filterItems.FindModels(models);
+        
         return await models.AnyAsync();
     }
     public async Task CreateVehicleModel(VehicleModel vehicleModel) 
