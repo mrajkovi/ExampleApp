@@ -86,19 +86,23 @@ public class FilterItems
         }
         return items;
     }
-    public IQueryable<VehicleMakeEntity> FindVehicles(IQueryable<VehicleMakeEntity> items)
+
+    public IQueryable<IVehicleBaseEntity> Find(IQueryable<IVehicleBaseEntity> items)
     {
-        return FindCommon(items).OfType<VehicleMakeEntity>();
-    }
-    public IQueryable<VehicleModelEntity> FindModels(IQueryable<VehicleModelEntity> items)
-    {
-        if (FilterBy.Equals("makeId") && Int32.TryParse(FilterString, out int makeId))
+        if (items is IQueryable<VehicleMakeEntity>)
         {
-            items = items.Where(m => m.MakeId == makeId);
+            return FindCommon(items);
         }
-        else
+        else if (items is IQueryable<VehicleModelEntity>)
         {
-            items = FindCommon(items).OfType<VehicleModelEntity>();
+            if (FilterBy.Equals("makeId") && Int32.TryParse(FilterString, out int makeId))
+            {
+                return items.OfType<VehicleModelEntity>().Where(m => m.MakeId == makeId);
+            }
+            else
+            {
+                return FindCommon(items);
+            }
         }
         return items;
     }

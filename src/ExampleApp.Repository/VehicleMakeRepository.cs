@@ -19,14 +19,14 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     public async Task<int> CountVehicles(FilterItems filterVehicles)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = filterVehicles.FindVehicles(vehicles);
+        vehicles = filterVehicles.Find(vehicles).OfType<VehicleMakeEntity>();
         return await vehicles.CountAsync();
     }
     public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
         vehicles = sortItems.Sort(vehicles);
-        vehicles = filterItems.FindVehicles(vehicles);
+        vehicles = filterItems.Find(vehicles).OfType<VehicleMakeEntity>();
         vehicles = await paginateItems.Paginate(vehicles);
         
         return _mapper.Map<List<VehicleMake>>(await vehicles.ToListAsync());
@@ -34,14 +34,14 @@ public class VehicleMakeRepository : IVehicleMakeRepository
     public async Task<bool> CheckVehicle(FilterItems filterItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = filterItems.FindVehicles(vehicles);
+        vehicles = filterItems.Find(vehicles).OfType<VehicleMakeEntity>();
         
         return await vehicles.AnyAsync();
     }
     public async Task<VehicleMake?> GetVehicle(FilterItems filterItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable().AsNoTracking();
-        vehicles = filterItems.FindVehicles(vehicles);
+        vehicles = filterItems.Find(vehicles).OfType<VehicleMakeEntity>();
         
         return _mapper.Map<VehicleMake>(await vehicles.FirstOrDefaultAsync());
     }
