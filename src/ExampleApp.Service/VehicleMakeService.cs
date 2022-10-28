@@ -13,21 +13,21 @@ public class VehicleMakeService : IVehicleMakeService
     {
         _repository = repository;
     }
-    public async Task<int> CountVehicles(FilterItems filterVehicles)
+    public async Task<int> CountVehicles(FilterItems<VehicleMakeEntity> filterVehicles)
     {
         return await _repository.CountVehicles(filterVehicles);
     }
-    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterVehicles, PaginateItems<VehicleMakeEntity> paginateItems) 
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems<VehicleMakeEntity> filterVehicles, PaginateItems<VehicleMakeEntity> paginateItems) 
     {
         return await _repository.GetVehicles(sortItems, filterVehicles, paginateItems);
     }
-    public async Task<VehicleMake?> GetVehicle(FilterItems filterVehicles)
+    public async Task<VehicleMake?> GetVehicle(FilterItems<VehicleMakeEntity> filterVehicles)
     {
         return await _repository.GetVehicle(filterVehicles);
     }
     public async Task<bool> CreateVehicle(VehicleMake newVehicle) 
     {        
-        var filterVehiclesByName = new FilterItems(newVehicle.Name, "name");
+        var filterVehiclesByName = new FilterItems<VehicleMakeEntity>(newVehicle.Name, "name");
 
         if (await _repository.CheckVehicle(filterVehiclesByName)) 
         {
@@ -37,14 +37,14 @@ public class VehicleMakeService : IVehicleMakeService
         await _repository.CreateVehicle(newVehicle);
         return true;
     }
-    public async Task<bool> UpdateVehicle(FilterItems filterVehiclesById, VehicleMake newVehicle)
+    public async Task<bool> UpdateVehicle(FilterItems<VehicleMakeEntity> filterVehiclesById, VehicleMake newVehicle)
     {
         if (!await _repository.CheckVehicle(filterVehiclesById)) 
         {
             return false;
         }
 
-        var filterVehiclesByName = new FilterItems(newVehicle.Name, "name", true);
+        var filterVehiclesByName = new FilterItems<VehicleMakeEntity>(newVehicle.Name, "name", true);
 
         var newVehicleId = Int32.Parse(filterVehiclesById.FilterString);
 
@@ -64,7 +64,7 @@ public class VehicleMakeService : IVehicleMakeService
 
         return true;
     }
-    public async Task<bool> DeleteVehicle(FilterItems filterVehiclesById)
+    public async Task<bool> DeleteVehicle(FilterItems<VehicleMakeEntity> filterVehiclesById)
     {     
         if (!await _repository.CheckVehicle(filterVehiclesById)) 
         {

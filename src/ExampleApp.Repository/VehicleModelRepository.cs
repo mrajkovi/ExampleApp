@@ -16,32 +16,32 @@ public class VehicleModelRepository : IVehicleModelRepository
         _context = context;
         _mapper = mapper;
     }
-    public async Task<int> CountVehiclesModels(FilterItems filterModels)
+    public async Task<int> CountVehiclesModels(FilterItems<VehicleModelEntity> filterModels)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = filterModels.Find(models).OfType<VehicleModelEntity>();
+        models = filterModels.Find(models);
         return await models.CountAsync();
     }
-    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleModelEntity> paginateItems)
+    public async Task<List<VehicleModel>> GetVehiclesModels(SortItems<VehicleModelEntity> sortItems, FilterItems<VehicleModelEntity> filterItems, PaginateItems<VehicleModelEntity> paginateItems)
     {
         var models = _context.VehicleModel.AsQueryable();
         models = sortItems.Sort(models);
-        models = filterItems.Find(models).OfType<VehicleModelEntity>();
+        models = filterItems.Find(models);
         models = await paginateItems.Paginate(models);
         
         return _mapper.Map<List<VehicleModel>>(await models.ToListAsync<VehicleModelEntity>());
     } 
-    public async Task<VehicleModel?> GetVehicleModel(FilterItems filterItems)
+    public async Task<VehicleModel?> GetVehicleModel(FilterItems<VehicleModelEntity> filterItems)
     {
         var models = _context.VehicleModel.AsQueryable().AsNoTracking();
-        models = filterItems.Find(models).OfType<VehicleModelEntity>();
+        models = filterItems.Find(models);
         
         return _mapper.Map<VehicleModel>(await models.FirstOrDefaultAsync());
     }
-    public async Task<bool> CheckVehicleModel(FilterItems filterItems)
+    public async Task<bool> CheckVehicleModel(FilterItems<VehicleModelEntity> filterItems)
     {
         var models = _context.VehicleModel.AsQueryable();
-        models = filterItems.Find(models).OfType<VehicleModelEntity>();
+        models = filterItems.Find(models);
         
         return await models.AnyAsync();
     }

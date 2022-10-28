@@ -16,32 +16,32 @@ public class VehicleMakeRepository : IVehicleMakeRepository
         _mapper = mapper;
     }
 
-    public async Task<int> CountVehicles(FilterItems filterVehicles)
+    public async Task<int> CountVehicles(FilterItems<VehicleMakeEntity> filterVehicles)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = filterVehicles.Find(vehicles).OfType<VehicleMakeEntity>();
+        vehicles = filterVehicles.Find(vehicles);
         return await vehicles.CountAsync();
     }
-    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
+    public async Task<List<VehicleMake>> GetVehicles(SortItems<VehicleMakeEntity> sortItems, FilterItems<VehicleMakeEntity> filterItems, PaginateItems<VehicleMakeEntity> paginateItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
         vehicles = sortItems.Sort(vehicles);
-        vehicles = filterItems.Find(vehicles).OfType<VehicleMakeEntity>();
+        vehicles = filterItems.Find(vehicles);
         vehicles = await paginateItems.Paginate(vehicles);
         
         return _mapper.Map<List<VehicleMake>>(await vehicles.ToListAsync());
     }
-    public async Task<bool> CheckVehicle(FilterItems filterItems)
+    public async Task<bool> CheckVehicle(FilterItems<VehicleMakeEntity> filterItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable();
-        vehicles = filterItems.Find(vehicles).OfType<VehicleMakeEntity>();
+        vehicles = filterItems.Find(vehicles);
         
         return await vehicles.AnyAsync();
     }
-    public async Task<VehicleMake?> GetVehicle(FilterItems filterItems)
+    public async Task<VehicleMake?> GetVehicle(FilterItems<VehicleMakeEntity> filterItems)
     {
         var vehicles = _context.VehicleMake.AsQueryable().AsNoTracking();
-        vehicles = filterItems.Find(vehicles).OfType<VehicleMakeEntity>();
+        vehicles = filterItems.Find(vehicles);
         
         return _mapper.Map<VehicleMake>(await vehicles.FirstOrDefaultAsync());
     }

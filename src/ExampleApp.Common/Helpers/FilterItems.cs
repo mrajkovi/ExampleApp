@@ -2,7 +2,7 @@ using ExampleApp.DAL;
 
 namespace ExampleApp.Common;
 
-public class FilterItems
+public class FilterItems<T> where T : IVehicleBaseEntity
 {
     public string FilterString { get; private set; }
     private string FilterBy { get; set; }
@@ -33,7 +33,7 @@ public class FilterItems
 
         FilterExactly = filterExactly; 
     }
-    private IQueryable<IVehicleBaseEntity> FindCommon(IQueryable<IVehicleBaseEntity> items)
+    private IQueryable<T> FindCommon(IQueryable<T> items)
     {
         if (!string.IsNullOrWhiteSpace(FilterString))
         {
@@ -87,7 +87,7 @@ public class FilterItems
         return items;
     }
 
-    public IQueryable<IVehicleBaseEntity> Find(IQueryable<IVehicleBaseEntity> items)
+    public IQueryable<T> Find(IQueryable<T> items)
     {
         if (items is IQueryable<VehicleMakeEntity>)
         {
@@ -97,7 +97,7 @@ public class FilterItems
         {
             if (FilterBy.Equals("makeId") && Int32.TryParse(FilterString, out int makeId))
             {
-                return items.OfType<VehicleModelEntity>().Where(m => m.MakeId == makeId);
+                return items.OfType<VehicleModelEntity>().Where(m => m.MakeId == makeId).OfType<T>();
             }
             else
             {
