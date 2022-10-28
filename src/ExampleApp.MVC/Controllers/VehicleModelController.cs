@@ -29,15 +29,15 @@ public class VehicleModelController : Controller
         try
         {
             var sortItems = new SortItems<VehicleModelEntity>(queryDataManipulation.SortOrder);
-            FilterItems filterModels;
+            FilterItems<VehicleModelEntity> filterModels;
             
             if (queryDataManipulation.SearchByNumber)
             {
-                filterModels = new FilterItems(queryDataManipulation.SearchString, "makeId");
+                filterModels = new FilterItems<VehicleModelEntity>(queryDataManipulation.SearchString, "makeId");
             }
             else
             {
-                filterModels = new FilterItems(queryDataManipulation.SearchString, "name_abbrv");
+                filterModels = new FilterItems<VehicleModelEntity>(queryDataManipulation.SearchString, "name_abbrv");
             }
 
             var paginateItems = new PaginateItems<VehicleModelEntity>(queryDataManipulation.PageNumber, queryDataManipulation.PageSize);
@@ -66,7 +66,7 @@ public class VehicleModelController : Controller
         
         try
         {
-            var filterModelsById = new FilterItems(id.ToString(), "id");
+            var filterModelsById = new FilterItems<VehicleModelEntity>(id.ToString(), "id");
             
             VehicleModel? vehicleModel = await _service.GetVehicleModel(filterModelsById);
             
@@ -122,7 +122,7 @@ public class VehicleModelController : Controller
         
         try
         {
-            var filterModelsById = new FilterItems(id.ToString(), "id");
+            var filterModelsById = new FilterItems<VehicleModelEntity>(id.ToString(), "id");
             VehicleModel vehicleModel = new VehicleModel();
             vehicleModel = _mapper.Map<VehicleModel>(vehicleModelsViewModel);
             
@@ -153,7 +153,7 @@ public class VehicleModelController : Controller
         
         try
         {
-            var filterModelsById = new FilterItems(id.ToString(), "id");
+            var filterModelsById = new FilterItems<VehicleModelEntity>(id.ToString(), "id");
             VehicleModel? vehicleModel = await _service.GetVehicleModel(filterModelsById);
             
             if (vehicleModel == null)
@@ -178,7 +178,7 @@ public class VehicleModelController : Controller
         _logger.LogInformation(EventID.DeleteItem, ControllerContext.HttpContext.GetEndpoint()?.ToString());
         try
         {
-            var filterModelsById = new FilterItems(id.ToString(), "id");
+            var filterModelsById = new FilterItems<VehicleModelEntity>(id.ToString(), "id");
             bool succeeded = await _service.DeleteVehicleModel(filterModelsById);
             
             if (succeeded) 
